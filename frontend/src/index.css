@@ -1,0 +1,38 @@
+@import "tailwindcss";
+
+@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;700&display=swap");
+
+.font-classy {
+  font-family: "Playfair Display", serif;
+}
+
+.font-title {
+  font-family: "Montserrat", "sans-serif";
+}
+
+input[type="color"]::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+input[type="color"]::-webkit-color-swatch {
+  border: none;
+  border-radius: 0;
+}
+
+input[type="color"] {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* Cacher complètement le UI natif */
+input[type="color"]::-webkit-color-swatch-container {
+  display: none;
+}
+
+input[type="color"]::-moz-color-swatch {
+  display: none;
+}

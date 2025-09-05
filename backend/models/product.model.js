@@ -1,0 +1,181 @@
+const mongoose = require("mongoose");
+
+const variantSchema = new mongoose.Schema({
+  size: {
+    type: String,
+    required: true,
+  },
+  stock: {
+    type: Number,
+    required: true,
+    min: 0,
+  },
+  colorTitle: {
+    type: String,
+    required: true,
+  },
+  colorCode: {
+    type: String,
+    required: true,
+  },
+  sku: { type: String, required: true, unique: true },
+});
+
+const imageVariantSchema = new mongoose.Schema({
+  color: {
+    type: String,
+    required: true,
+  },
+  images: {
+    type: [String],
+    required: true,
+    validate: {
+      validator: function (v) {
+        return v.length >= 1 && v.length <= 10;
+      },
+      message: "A product should have between 1 and 10 images",
+    },
+  },
+});
+
+// Middleware pour générer le SKU automatiquement avant la sauvegarde
+variantSchema.pre("validate", function (next) {
+  if (!this.sku) {
+    // Exemple de génération de SKU : NOMDU PRODUIT-Taille-Couleur
+    const productName = this.ownerDocument().name || "PRODUCT";
+    this.sku = `${productName.toUpperCase()}-${this.size.toUpperCase()}-${this.color.toUpperCase()}`;
+  }
+  next();
+});
+
+const productSchema = new mongoose.Schema(
+  {
+    name: {
+      type: String,
+      required: [true, "Le nom du produit est obligatoire"],
+      trim: true,
+      maxlength: [100, "Le nom ne peut pas dépasser 100 caractères"],
+    },
+
+    description: {
+      type: String,
+      required: [true, "La description est obligatoire"],
+      trim: true,
+      maxlength: [2000, "La description ne peut pas dépasser 2000 caractères"],
+    },
+
+    gender: {
+      type: String,
+      enum: ["Men", "Woman", "Unisex"],
+      default: "Unisex",
+    },
+
+    category: {
+      type: String,
+      required: true,
+      enum: [
+        "Mobile Phones",
+        "Laptops",
+        "Tablets",
+        "Cameras",
+        "Accessories",
+        "T-Shirts",
+        "Shirts",
+        "Jeans",
+        "Dresses",
+        "Jackets",
+        "Sweaters",
+        "Shoes",
+        "Accessories",
+        "Cookware",
+        "Bedding",
+        "Decor",
+        "Storage",
+        "Lighting",
+        "Skincare",
+        "Makeup",
+        "Hair Care",
+        "Accessories",
+        "Fitness Equipment",
+        "Athletic Shoes",
+        "Apparel",
+        "Outdoor Gear",
+        "Sports Accessories",
+        "Fiction",
+        "Non-Fiction",
+        "Comics",
+        "Educational",
+        "Children's Books",
+        "Clothing",
+        "Toys",
+        "School Supplies",
+        "Footwear",
+      ],
+    },
+
+    originalPrice: {
+      type: Number,
+      required: true,
+      min: [0, "Le prix ne peut pas être négatif"],
+      max: [100000, "Le prix ne peut pas dépasser 100000"],
+    },
+
+    price: {
+      type: Number,
+      required: true,
+      min: [0, "Le prix ne peut pas être négatif"],
+      max: [100000, "Le prix ne peut pas dépasser 100000"],
+    },
+
+    stock: {
+      type: Number,
+      required: true,
+      min: [0, "Le stock ne peut pas être négatif"],
+      default: 0,
+    },
+
+    discount: {
+      type: Number,
+      min: [0, "La remise ne peut pas être négative"],
+      max: [100, "La remise ne peut pas dépasser 100%"],
+      default: 0,
+    },
+
+    discountType: { type: String, default: "" },
+
+    imagesVariant: [imageVariantSchema],
+
+    variants: [variantSchema],
+
+    status: {
+      type: String,
+      enum: ["draft", "pending", "active"],
+      default: "draft",
+    },
+
+    seller: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "User", // Nom du modèle référencé
+      required: true,
+    },
+  },
+  {
+    timestamps: true,
+    toJSON: { virtuals: true },
+    toObject: { virtuals: true },
+  }
+);
+
+// Middleware pour mettre à jour totalStock automatiquement
+productSchema.pre("save", function (next) {
+  if (this.variants && this.variants.length > 0) {
+    this.stock = this.variants.reduce((sum, v) => sum + v.stock, 0);
+  } else {
+    this.stock = 0;
+  }
+  next();
+});
+
+productSchema.index({ name: 1 }); // 1 = croissant, -1 = décroissant
+
+module.exports = mongoose.model("product", productSchema);
