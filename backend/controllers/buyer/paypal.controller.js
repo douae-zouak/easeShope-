@@ -108,8 +108,8 @@ exports.createOrder = async (req, res) => {
         landing_page: "LOGIN",
         shipping_preference: "NO_SHIPPING",
         user_action: "PAY_NOW",
-        return_url: `${process.env.REDIRECT_BASE_URL}/complete-payment`,
-        cancel_url: `${process.env.REDIRECT_BASE_URL}/cancel-payment`,
+        return_url: `${process.env.REDIRECT_BASE_URL}/client/complete-payment`,
+        cancel_url: `${process.env.REDIRECT_BASE_URL}/client/cancel-payment`,
       },
     };
 

@@ -18,6 +18,7 @@ const clientRoutes = require("./routes/Buyer/products.route");
 const cartRoutes = require("./routes/Buyer/cart.route");
 const favoriteRoutes = require("./routes/Buyer/favorite.route");
 const paypalRoutes = require("./routes/Buyer/paypal.route");
+const sellerReviewRoutes = require("./routes/Buyer/sellerReview.route");
 const authMiddleware = require("./middlewares/auth.middleware");
 
 dotenv.config();
@@ -73,6 +74,7 @@ app.use("/", clientRoutes);
 app.use("/cart", authMiddleware.ckeckTokens, cartRoutes);
 app.use("/favorite", authMiddleware.ckeckTokens, favoriteRoutes);
 app.use("/paypal", authMiddleware.ckeckTokens, paypalRoutes);
+app.use("/sellerReview", authMiddleware.ckeckTokens, sellerReviewRoutes);
 
 // Error handling
 app.use(errorMiddleware.notFoundHandler);

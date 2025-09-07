@@ -8,11 +8,10 @@ exports.refreshTokenService = async (res, refreshToken) => {
 
   if (!refreshToken) {
     console.log("No refresh token found in cookies");
-    // return res.status(401).json({
-    //   error: "No refresh token provided",
-    //   shouldLogout: true,
-    // });
-    throw createError.Unauthorized("No refresh token provided");
+    return res.status(401).json({
+      error: "No refresh token provided",
+      shouldLogout: true,
+    });
   }
 
   console.log("Looking for refresh token in database:", refreshToken);
@@ -40,7 +39,7 @@ exports.refreshTokenService = async (res, refreshToken) => {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: "lax",
-    maxAge: 15 * 60 * 1000,
+    maxAge: 30 * 60 * 1000,
   });
 
   res.cookie("refreshToken", newRefreshToken, {

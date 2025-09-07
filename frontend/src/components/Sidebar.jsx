@@ -7,8 +7,11 @@ import { useOrderStore } from "../store/order.store";
 const Sidebar = () => {
   const location = useLocation(); // Pour détecter la page active
   const navigate = useNavigate();
-  const { orders } = useOrderStore();
+  const { sellerOrders, getSellerOrders } = useOrderStore();
 
+  useEffect(() => {
+    getSellerOrders();
+  }, []);
   // Fonction pour vérifier si un lien est actif
   const isActive = (path) => location.pathname === path;
 
@@ -59,7 +62,7 @@ const Sidebar = () => {
               icon={<ShoppingBag size={20} />}
               text="Orders"
               active={isActive("/vendor/orders")}
-              alert={orders.length !== 0 ? true : false}
+              alert={sellerOrders.length !== 0 ? true : false}
               link="/vendor/orders"
             />
 

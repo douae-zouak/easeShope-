@@ -17,7 +17,9 @@ export const useOrderStore = create(
       getSellerOrders: async () => {
         try {
           set({ isLoading: true });
-          const response = await axios.get(`${API_URL}/seller-orders`);
+          const response = await axios.get(`${API_URL}/seller-orders`, {
+            withCredentials: true,
+          });
           set({
             sellerOrders: response.data.data || [],
             isLoading: false,
@@ -29,10 +31,7 @@ export const useOrderStore = create(
             error.response?.data?.error ||
             error.message ||
             "Error while getting seller orders";
-
-          console.error("Approve error:", errorMessage);
           set({ error: errorMessage, isLoading: false });
-          throw new Error(errorMessage);
         }
       },
 
@@ -45,7 +44,7 @@ export const useOrderStore = create(
             isLoading: false,
             error: null,
           });
-          console.log(response.data.userId);
+
           return response.data.data;
         } catch (error) {
           const errorMessage =
@@ -53,9 +52,7 @@ export const useOrderStore = create(
             error.message ||
             "Error while getting client orders";
 
-          console.error("Approve error:", errorMessage);
           set({ error: errorMessage, isLoading: false });
-          throw new Error(errorMessage);
         }
       },
 

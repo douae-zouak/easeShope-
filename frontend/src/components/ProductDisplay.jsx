@@ -12,11 +12,8 @@ const ProductDisplay = () => {
 
   useEffect(() => {
     getAllProducts();
-  }, [getAllProducts]);
+  }, []);
 
-  const womenFashion = activeProducts.filter(
-    (product) => (product.gender = "Woman")
-  );
 
   return (
     <div className="container mx-auto px-4 py-8">

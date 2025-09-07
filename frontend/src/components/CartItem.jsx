@@ -35,7 +35,7 @@ const CartItem = ({ item, updateQuantity, deleteProductFromCart }) => {
     if (item.productId && item.productId._id) {
       updateQuantity(
         item.productId._id,
-        item.quantity + 1,
+        Math.min(item.quantity + 1, item.stock),
         item.size,
         item.colorTitle
       );

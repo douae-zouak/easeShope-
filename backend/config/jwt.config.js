@@ -5,7 +5,7 @@ const RefreshToken = require("../models/refreshToken.model");
 
 exports.generateAccessToken = (userId) => {
   return jwt.sign({ userId }, process.env.ACCESS_TOKEN_SECRET_KEY, {
-    expiresIn: "1d",
+    expiresIn: "30m",
   });
 };
 

@@ -35,6 +35,7 @@ import DiscountProduct from "./pages/clientPages/DiscountProduct";
 import { useEffect } from "react";
 import LikePage from "./pages/clientPages/LikePage";
 import Orders from "./pages/clientPages/Orders";
+import SellerInfoPage from "./pages/clientPages/SellerInfoPage";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -78,18 +79,23 @@ const BuyerProtectedRoute = ({ children, allowedRoles }) => {
 };
 
 // redirect authenticated users to home page
-const RedirectAuthenticatedUser = ({ children }) => {
-  const { isAuthenticated, user } = useAuthStore();
+// const RedirectAuthenticatedUser = ({ children }) => {
+//   const { isAuthenticated, user } = useAuthStore();
 
-  if (isAuthenticated && user.isVerified) {
-    return <Navigate to="/" replace />;
-  }
+//   if (isAuthenticated && user.isVerified) {
+//     if (user.role === "buyer") {
+//       return <Navigate to="/home" replace />;
+//     }
 
-  return children;
-};
+//     if (user.role === "vendor") {
+//       return <Navigate to="/vendor/dashboard" replace />;
+//     }
+//   }
+
+//   return children;
+// };
 
 const AuthRoutes = () => (
-  <RedirectAuthenticatedUser>
     <AuthLayout>
       <Routes>
         <Route path="signin" element={<SigninPage />} />
@@ -104,7 +110,6 @@ const AuthRoutes = () => (
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AuthLayout>
-  </RedirectAuthenticatedUser>
 );
 
 const VendorRoutes = () => (
@@ -132,6 +137,11 @@ const ProfileWithTransition = Transition(ClientProfilePage);
 const NotFoundWithTransition = Transition(NotFoundPage);
 const ProductsByCategoryWithTransition = Transition(ProductsByCategory);
 const DiscountProductWithTransition = Transition(DiscountProduct);
+const SellerInfoWithTransition = Transition(SellerInfoPage);
+const SuccessPageWithTransition = Transition(SuccessPage);
+const CancelPageWithTransition = Transition(CancelPage);
+const LikePageWithTransition = Transition(LikePage);
+const OrdersWithTransition = Transition(Orders);
 
 const BuyerRoutes = () => {
   const location = useLocation();
@@ -149,19 +159,36 @@ const BuyerRoutes = () => {
           path="product-details/:id"
           element={<ProductDetailsWithTransition />}
         />
+        <Route path="seller/:id" element={<SellerInfoWithTransition />} />
         <Route
           path="discount-product"
           element={<DiscountProductWithTransition />}
         />
-        <Route path="complete-payment" element={<SuccessPage />} />
-        <Route path="cancel-payment" element={<CancelPage />} />
-
-        <Route path="cart" element={<CartWithTransition />} />
-        <Route path="wishlist" element={<LikePage />} />
-        <Route path="orders" element={<Orders />} />
-        <Route path="profile" element={<ProfileWithTransition />} />
         <Route path="*" element={<NotFoundWithTransition />} />
       </Routes>
+    </AnimatePresence>
+  );
+};
+
+const BuyerProtectedRoutes = () => {
+  const location = useLocation();
+
+  return (
+    <AnimatePresence mode="wait">
+      <BuyerProtectedRoute allowedRoles={["buyer"]}>
+        <Routes location={location} key={location.pathname}>
+          <Route path="cart" element={<CartWithTransition />} />
+          <Route path="wishlist" element={<LikePageWithTransition />} />
+          <Route path="orders" element={<OrdersWithTransition />} />
+          <Route path="profile" element={<ProfileWithTransition />} />
+          <Route
+            path="complete-payment"
+            element={<SuccessPageWithTransition />}
+          />
+          <Route path="cancel-payment" element={<CancelPageWithTransition />} />
+          <Route path="*" element={<NotFoundWithTransition />} />
+        </Routes>
+      </BuyerProtectedRoute>
     </AnimatePresence>
   );
 };
@@ -188,6 +215,8 @@ function App() {
 
           {/* Buyer */}
           <Route path="/*" element={<BuyerRoutes />} />
+
+          <Route path="/client/*" element={<BuyerProtectedRoutes />} />
         </Routes>
       </AuthInitializer>
 

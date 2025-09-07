@@ -7,6 +7,20 @@ const PROFILE_API_URL = "http://localhost:3000/profile";
 
 axios.defaults.withCredentials = true;
 
+let isRefreshing = false;
+let failedQueue = [];
+
+const processQueue = (error, user = null) => {
+  failedQueue.forEach((prom) => {
+    if (error) {
+      prom.reject(error);
+    } else {
+      prom.resolve(user);
+    }
+  });
+  failedQueue = [];
+};
+
 export const useAuthStore = create(
   persist(
     (set) => ({
@@ -208,12 +222,14 @@ export const useAuthStore = create(
 
       setupAxiosInterceptors: () => {
         console.log("intercepter installed");
+
         axios.interceptors.response.use(
           (response) => response,
           async (error) => {
             const originalRequest = error.config;
 
             // Éviter les boucles infinies - si c'est déjà la requête de refresh
+            // “Si l’erreur vient déjà d’un appel /refresh, je ne tente pas un refresh dessus.”
             if (originalRequest.url?.includes("/refresh")) {
               return Promise.reject(error);
             }
@@ -221,6 +237,18 @@ export const useAuthStore = create(
             // Si le token est expiré → on tente le refresh
             if (error.response?.status === 401 && !originalRequest._retry) {
               originalRequest._retry = true;
+
+              if (isRefreshing) {
+                // Attendre le refresh déjà en cours
+                return new Promise((resolve, reject) => {
+                  failedQueue.push({
+                    resolve: () => resolve(axios(originalRequest)),
+                    reject,
+                  });
+                });
+              }
+
+              isRefreshing = true;
 
               try {
                 const response = await axios.get(`${API_URL}/refresh`, {
@@ -234,15 +262,23 @@ export const useAuthStore = create(
                   isAuthenticated: true,
                 });
 
+                processQueue(null, response.data.user);
+
                 return axios(originalRequest);
               } catch (refreshError) {
                 console.error("Refresh token invalid → logout");
+
                 set({ user: null, isAuthenticated: false });
+
                 document.cookie =
                   "accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
                 document.cookie =
                   "refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+                processQueue(refreshError, null);
                 return Promise.reject(refreshError);
+              } finally {
+                isRefreshing = false;
               }
             }
 

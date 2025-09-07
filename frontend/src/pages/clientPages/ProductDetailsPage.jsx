@@ -26,12 +26,14 @@ const ProductDetailsPage = () => {
   const { id } = useParams();
   const { getProductById, isLoading, addToCart, favorites } = useProductStore();
   const [product, setProduct] = useState(null);
+  const [seller, setSeller] = useState(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedVariant, setSelectedVariant] = useState(null);
   const [quantity, setQuantity] = useState(1);
   const isLiked = favorites.some((fav) => fav.productId._id === id);
   const [liked, setLiked] = useState(isLiked);
   const { toggleToFavorite } = useProductStore();
+  const API_URL = import.meta.env.VITE_API_URL;
 
   const handleProductLike = async () => {
     try {
@@ -58,7 +60,8 @@ const ProductDetailsPage = () => {
     const loadProductData = async () => {
       try {
         const data = await getProductById(id);
-        setProduct(data);
+        setProduct(data.product);
+        setSeller(data.seller);
         // Sélectionner la première variante par défaut
         if (data.variants && data.variants.length > 0) {
           setSelectedVariant(data.variants[0]);
@@ -366,7 +369,10 @@ const ProductDetailsPage = () => {
                       (variant) => (
                         <button
                           key={variant.sku}
-                          onClick={() => setSelectedVariant(variant)}
+                          onClick={() => {
+                            setSelectedVariant(variant);
+                            setQuantity(1); // reset quantité à 1 quand on change de variante
+                          }}
                           disabled={variant.stock === 0}
                           className={`px-4 py-2 rounded-md border text-sm font-medium ${
                             selectedVariant.sku === variant.sku
@@ -378,7 +384,7 @@ const ProductDetailsPage = () => {
                               : ""
                           }`}
                         >
-                          {variant.size}{" "}
+                          {variant.size} ({variant.stock})
                           {variant.stock === 0 && "(Out of stock)"}
                         </button>
                       )
@@ -401,7 +407,14 @@ const ProductDetailsPage = () => {
 
                   <span className="px-4 py-2">{quantity}</span>
                   <button
-                    onClick={() => setQuantity(quantity + 1)}
+                    onClick={() => {
+                      if (selectedVariant) {
+                        quantity < selectedVariant?.stock &&
+                          setQuantity(quantity + 1);
+                      } else {
+                        toast.error("Choose a variant first");
+                      }
+                    }}
                     className="px-3 py-2 text-gray-600 group"
                   >
                     <Plus
@@ -482,6 +495,32 @@ const ProductDetailsPage = () => {
                     <p className="text-sm font-medium text-gray-900">Package</p>
                     <p className="text-sm text-gray-500">Full protection</p>
                   </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Seller info */}
+            <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
+              <h1 className="text-gray-900 text-2xl font-medium font-title">
+                Seller
+              </h1>
+              <div className="flex items-center">
+                {`${API_URL}${seller.profilePhoto}` && (
+                  <Link to={`/seller/${seller._id}`}>
+                    <img
+                      src={`${API_URL}${seller.profilePhoto}`}
+                      alt="Profile preview"
+                      className="w-15 h-15 rounded-full"
+                    />
+                  </Link>
+                )}
+                <div className="ml-3">
+                  <Link to={`/seller/${seller._id}`}>
+                    <p className="text-sm font-medium text-gray-900 capitalize">
+                      {seller.fullName}
+                    </p>
+                  </Link>
+                  <p className="text-sm text-gray-500">Stars reviews</p>
                 </div>
               </div>
             </div>

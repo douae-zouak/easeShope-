@@ -118,9 +118,9 @@ const ClientNavbar = () => {
           <button
             type="button"
             className="w-32 flex justify-center items-center gap-1 px-4 py-2 text-md font-medium bg-[#7D6BFB] text-white hover:bg-[#6a59d6] rounded-lg cursor-pointer transition-colors duration-200"
-            onClick={() => navigate("/auth/signin")}
+            onClick={() => navigate("/auth/login")}
           >
-            <span>Sign Up</span>
+            <span>Login</span>
           </button>
         )}
       </div>

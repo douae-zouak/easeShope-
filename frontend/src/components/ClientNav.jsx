@@ -5,13 +5,11 @@ import { ShoppingCart, User, LogOut, Heart, Package } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import { useOrderStore } from "../store/order.store";
 
 const ClientNav = () => {
   const [open, setOpen] = useState(false);
 
   const { getColor, getInitial, favorites, cart } = useProductStore();
-  const { clientOrders } = useOrderStore();
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
 
@@ -41,18 +39,17 @@ const ClientNav = () => {
           <div className="flex items-center space-x-6">
             <div className="flex flex-row gap-4 items-center">
               {/* orders */}
-              {clientOrders.length !== 0 && (
-                <Link to="/orders">
-                  <button>
-                    <Package
-                      className={`w-6 h-6 transition-all duration-200 hover:scale-110 cursor-pointer`}
-                    />
-                  </button>
-                </Link>
-              )}
+
+              <Link to="/client/orders">
+                <button>
+                  <Package
+                    className={`w-6 h-6 transition-all duration-200 hover:scale-110 cursor-pointer`}
+                  />
+                </button>
+              </Link>
 
               {/* whishlist */}
-              <Link to="/wishlist">
+              <Link to="/client/wishlist">
                 <button>
                   <Heart
                     className={`w-6 h-6 text-red-500 transition-all duration-200 hover:scale-110 ${
@@ -65,7 +62,7 @@ const ClientNav = () => {
               </Link>
 
               {/* Cart */}
-              <Link to="/cart">
+              <Link to="/client/cart">
                 <motion.button
                   whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.95 }}
@@ -128,7 +125,7 @@ const ClientNav = () => {
               {open && (
                 <div className="absolute right-0 mt-2 w-48 bg-white border rounded-lg shadow-lg z-50">
                   <Link
-                    to="/profile"
+                    to="/client/profile"
                     className="flex items-center gap-2 px-4 py-2 text-gray-700 hover:bg-gray-100 hover:rounded-lg"
                     onClick={() => setOpen(false)}
                   >
@@ -150,9 +147,9 @@ const ClientNav = () => {
           <button
             type="button"
             className="w-32 flex justify-center items-center gap-1 px-4 py-2 text-md font-medium bg-[#7D6BFB] text-white hover:bg-[#6a59d6] rounded-lg cursor-pointer transition-colors duration-200"
-            onClick={() => navigate("/auth/signin")}
+            onClick={() => navigate("/auth/login")}
           >
-            <span>Sign Up</span>
+            <span>Login</span>
           </button>
         )}
       </div>

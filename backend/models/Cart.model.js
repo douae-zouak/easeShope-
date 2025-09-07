@@ -11,7 +11,7 @@ const cartItemSchema = new mongoose.Schema({
   size: { type: String, required: true },
   colorTitle: { type: String, required: true },
   colorCode: { type: String, required: true },
-  sku: { type: String, required: true, unique: true },
+  sku: { type: String, required: true },
   colorImages: { type: [String], required: true },
 });
 
@@ -21,7 +21,6 @@ const CartSchema = new mongoose.Schema(
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
-      unique: true,
     },
 
     items: [cartItemSchema],

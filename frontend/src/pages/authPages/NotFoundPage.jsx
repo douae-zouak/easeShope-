@@ -16,7 +16,7 @@ const NotFoundPage = () => {
       </h2>
 
       <div className="px-8 py-4 bg-gray-900 opacity-80 flex justify-center">
-        <Link to={"/auth/login"} className="text-blue-300 hover:underline">
+        <Link to={"/home"} className="text-blue-300 hover:underline">
           return to home page
         </Link>
       </div>

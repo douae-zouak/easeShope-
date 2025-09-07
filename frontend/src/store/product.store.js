@@ -33,6 +33,7 @@ export const useProductStore = create(
       itemCount: 0,
       favorites: [],
       order: [],
+      seller: null,
 
       toggleToFavorite: async (productId) => {
         try {
@@ -609,7 +610,10 @@ export const useProductStore = create(
             error: null,
             uploadedImages: uploadedImages,
           });
-          return response.data.product;
+          return {
+            product: response.data.product,
+            seller: response.data.seller,
+          };
         } catch (error) {
           let errorMessage = "Error while getting a product";
 

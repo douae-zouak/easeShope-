@@ -199,7 +199,7 @@ exports.postLogin = async (req, res, next) => {
       secure: process.env.NODE_ENV === "production",
       // envoyés seulement via HTTPS
       sameSite: "lax",
-      maxAge: 15 * 60 * 1000, // 15 minutes
+      maxAge: 30 * 60 * 1000,
     });
 
     res.cookie("refreshToken", refreshToken, {
@@ -218,6 +218,8 @@ exports.postLogin = async (req, res, next) => {
 exports.refreshTokens = async (req, res, next) => {
   try {
     const refreshToken = req.cookies.refreshToken;
+
+    console.log("refresh token existes : ", refreshToken);
 
     const result = await tokenService.refreshTokenService(res, refreshToken);
 

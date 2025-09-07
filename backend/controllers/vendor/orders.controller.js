@@ -111,9 +111,9 @@ exports.getClientOrders = async (req, res, next) => {
     // Récupérer toutes les commandes passées par ce client (les plus récentes d'abord)
     const orders = await Order.find({ userId }).sort({ createdAt: -1 });
 
-    if (!orders || orders.length === 0) {
-      return res.status(404).json({ error: "No orders found for this client" });
-    }
+    // if (!orders || orders.length === 0) {
+    //   return res.status(404).json({ error: "No orders found for this client" });
+    // }
 
     res.status(200).json({ data: orders });
   } catch (error) {

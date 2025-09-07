@@ -38,7 +38,7 @@ const orderItemsSchema = new mongoose.Schema({
   },
   sku: {
     type: String,
-    required: true,
+    default: "",
   },
   colorImages: {
     type: [String],
