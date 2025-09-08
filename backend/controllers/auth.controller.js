@@ -295,7 +295,7 @@ exports.requestPasswordReset = async (req, res, next) => {
 
     await brevoConfig.sendResetPasswordEmail(
       user.email,
-      `${process.env.FRONTEND_URL}/reset-password/${resetToken}`
+      `${process.env.FRONTEND_URL}/auth/reset-password/${resetToken}`
     );
 
     res.status(200).json({

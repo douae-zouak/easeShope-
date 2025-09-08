@@ -5,6 +5,6 @@ const router = express.Router();
 
 router.post("/add", sellerReviewController.addReview);
 
-router.get("/sellerReview/:sellerId", sellerReviewController.addReview);
+router.get("/:sellerId", sellerReviewController.getSellerReviews);
 
 module.exports = router;

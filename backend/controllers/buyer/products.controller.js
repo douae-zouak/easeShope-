@@ -1,5 +1,6 @@
 const Product = require("../../models/product.model");
 const User = require("../../models/user.model");
+const mongoose = require("mongoose");
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -35,7 +36,14 @@ exports.getProductById = async (req, res, next) => {
 
 exports.getSellerById = async (req, res, next) => {
   try {
-    const userId = req.params;
+    // EXTRACTION CORRECTE de l'ID
+    const { userId } = req.params; // ← Destructuring pour obtenir la valeur
+
+    console.log("user ID : ", userId); // Maintenant une string "123abc"
+
+    if (!userId || !mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: "Invalid user ID format" });
+    }
 
     const seller = await User.findById(userId);
     console.log("seller back : ", seller);

@@ -25,6 +25,9 @@ const LoginPage = () => {
       if (loggedInUser?.role === "buyer") {
         navigate("/home");
       }
+      if (loggedInUser?.role === "admin") {
+        navigate("/admin/dashboard");
+      }
     } catch (error) {
       const errorMessage =
         error.response?.data?.error || "Invalid credentials. Please try again.";

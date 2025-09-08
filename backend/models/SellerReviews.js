@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const User = require("./user.model");
 
 const SellerReviewSchema = new mongoose.Schema(
   {
@@ -84,6 +83,8 @@ SellerReviewSchema.statics.getAverageRating = async function (sellerId) {
 // Fonction utilitaire pour mettre à jour les stats du vendeur
 async function updateSellerStats(sellerId) {
   const SellerReview = mongoose.model("SellerReview");
+  const User = mongoose.model("user"); // ← Récupérer le modèle comme ça
+
   const stats = await SellerReview.getAverageRating(sellerId);
 
   await User.findByIdAndUpdate(sellerId, {

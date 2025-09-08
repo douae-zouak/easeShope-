@@ -9,14 +9,14 @@ async function createAdmin() {
     );
 
     // Mot de passe en clair (tu peux choisir)
-    const plainPassword = "admin1234";
+    const plainPassword = "admin123";
 
     // Hachage
     const hashedPassword = await bcrypt.hash(plainPassword, 10);
 
     // Création de l’admin
     const adminUser = new User({
-      email: "douaezouak96@gmail.com",
+      email: "zouakdouae96@gmail.com",
       password: hashedPassword,
       fullName: "Admin User",
       role: "admin", // très important

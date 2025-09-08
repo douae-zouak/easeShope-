@@ -29,7 +29,6 @@ export const useUserStore = create(
             error.message ||
             "Error while getting seller infos";
 
-          console.error("Approve error:", errorMessage);
           set({ error: errorMessage, isLoading: false });
           throw new Error(errorMessage);
         }

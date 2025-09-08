@@ -17,8 +17,15 @@ import EmailVerificationPage from "./pages/authPages/EmailVerificationPage";
 import AuthLayout from "./layouts/AuthLayout";
 import NotFoundPage from "./pages/authPages/NotFoundPage";
 import VendorLayout from "./layouts/VendorLayout";
+import AdminLayout from "./layouts/AdminLayout";
 import DashboardPage from "./pages/adminPages/DashboardPage";
 import EditProductPage from "./pages/adminPages/EditProductPage";
+
+import DashboardAdminPage from "./pages/adminSupPages/DashboardPage";
+import ProfileAdmin from "./pages/adminSupPages/ProfilePage";
+import ProductsActivationPage from "./pages/adminSupPages/ProductsActivationPage";
+import ReturnsRequestsPage from "./pages/adminSupPages/ReturnsRequestsPage";
+import VendorsPage from "./pages/adminSupPages/VendorsPage";
 
 import AuthInitializer from "./components/AuthInitializer";
 import HomePage from "./pages/clientPages/HomePage";
@@ -96,20 +103,20 @@ const BuyerProtectedRoute = ({ children, allowedRoles }) => {
 // };
 
 const AuthRoutes = () => (
-    <AuthLayout>
-      <Routes>
-        <Route path="signin" element={<SigninPage />} />
-        <Route path="verify-email" element={<EmailVerificationPage />} />
-        <Route
-          path="resend-verification-code"
-          element={<ResendEmailVerification />}
-        />
-        <Route path="login" element={<LoginPage />} />
-        <Route path="forgot-password" element={<ForgotPasswordPage />} />
-        <Route path="reset-password/:token" element={<ResetPasswordPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </AuthLayout>
+  <AuthLayout>
+    <Routes>
+      <Route path="signin" element={<SigninPage />} />
+      <Route path="verify-email" element={<EmailVerificationPage />} />
+      <Route
+        path="resend-verification-code"
+        element={<ResendEmailVerification />}
+      />
+      <Route path="login" element={<LoginPage />} />
+      <Route path="forgot-password" element={<ForgotPasswordPage />} />
+      <Route path="reset-password/:token" element={<ResetPasswordPage />} />
+      <Route path="*" element={<NotFoundPage />} />
+    </Routes>
+  </AuthLayout>
 );
 
 const VendorRoutes = () => (
@@ -125,6 +132,24 @@ const VendorRoutes = () => (
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </VendorLayout>
+  </ProtectedRoute>
+);
+
+const AdminRoutes = () => (
+  <ProtectedRoute allowedRoles={["admin"]}>
+    <AdminLayout>
+      <Routes>
+        <Route path="dashboard" element={<DashboardAdminPage />} />
+        <Route
+          path="products-activation"
+          element={<ProductsActivationPage />}
+        />
+        <Route path="returns-requests" element={<ReturnsRequestsPage />} />
+        <Route path="vendors" element={<VendorsPage />} />
+        <Route path="profile" element={<ProfileAdmin />} />
+        <Route path="*" element={<NotFoundPage />} />
+      </Routes>
+    </AdminLayout>
   </ProtectedRoute>
 );
 
@@ -159,7 +184,7 @@ const BuyerRoutes = () => {
           path="product-details/:id"
           element={<ProductDetailsWithTransition />}
         />
-        <Route path="seller/:id" element={<SellerInfoWithTransition />} />
+        <Route path="seller/:sellerId" element={<SellerInfoWithTransition />} />
         <Route
           path="discount-product"
           element={<DiscountProductWithTransition />}
@@ -217,6 +242,8 @@ function App() {
           <Route path="/*" element={<BuyerRoutes />} />
 
           <Route path="/client/*" element={<BuyerProtectedRoutes />} />
+
+          <Route path="/admin/*" element={<AdminRoutes />} />
         </Routes>
       </AuthInitializer>
 

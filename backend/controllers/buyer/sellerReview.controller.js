@@ -1,5 +1,8 @@
-const Order = require("../../models/Order.model");
+const User = require("../../models/user.model");
 const SellerReview = require("../../models/SellerReviews");
+const Order = require("../../models/Order.model");
+
+const mongoose = require("mongoose");
 
 exports.addReview = async (req, res, next) => {
   try {
@@ -7,31 +10,27 @@ exports.addReview = async (req, res, next) => {
     const { sellerId, rating, comment } = req.body;
 
     if (!rating) {
-      return res.status(400).json({
+      return res.json({
         error: "please add at least rating",
       });
     }
 
     const order = await Order.find({ userId: userId });
 
-    console.log("order found : ", order);
-
     if (!order || order.length === 0) {
-      return res.satus(400).json({
+      return res.json({
         error: "your didn't make any order for this seller to rate him",
       });
     }
 
-    console.log("items : ", order[0].items);
-
-    const hasSellerProducts = order[0].items.some(
-      (item) => item.sellerId && item.sellerId.toString() === sellerId
+    const hasSellerProducts = order.some((o) =>
+      o.items.some(
+        (item) => item.sellerId && item.sellerId.toString() === sellerId
+      )
     );
 
-    console.log("hasSellerProducts : ", hasSellerProducts);
-
     if (!hasSellerProducts) {
-      return res.satus(400).json({
+      return res.json({
         error: "your didn't make any order for this seller to rate him",
       });
     }
@@ -42,7 +41,7 @@ exports.addReview = async (req, res, next) => {
     });
 
     if (existingReview) {
-      return res.status(400).json({
+      return res.json({
         error: "You have already rated this seller",
       });
     }
@@ -81,7 +80,11 @@ exports.getSellerReviews = async (req, res, next) => {
     const skip = (page - 1) * limit;
 
     const reviews = await SellerReview.find({ sellerId: sellerId })
-      .populate("userId", "fullName profilePhoto") // Infos de l'utilisateur
+      .populate({
+        path: "userId",
+        select: "fullName profilePhoto email", // Sélectionnez les champs nécessaires
+        model: mongoose.model("user"), // Référence directe via mongoose
+      }) // Infos de l'utilisateur
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
@@ -93,11 +96,7 @@ exports.getSellerReviews = async (req, res, next) => {
     });
     const totalPages = Math.ceil(totalReviews / limit);
 
-    // Calculer la note moyenne
-    const averageRating = await SellerReview.aggregate([
-      { $match: { sellerId: new mongoose.Types.ObjectId(sellerId) } },
-      { $group: { _id: null, average: { $avg: "$rating" } } },
-    ]);
+    const stats = await SellerReview.getAverageRating(sellerId);
 
     res.status(200).json({
       reviews: reviews,
@@ -108,7 +107,7 @@ exports.getSellerReviews = async (req, res, next) => {
         hasNext: page < totalPages,
         hasPrev: page > 1,
       },
-      averageRating: averageRating[0]?.average || 0,
+      stats: stats,
     });
   } catch (error) {
     next(error);
