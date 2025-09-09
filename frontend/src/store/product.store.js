@@ -4,8 +4,6 @@ import axios from "axios";
 
 const API_URL = "http://localhost:3000/product";
 const API_CLIENT_URL = "http://localhost:3000";
-const API_CART_URL = "http://localhost:3000/cart";
-const API_FAVORITE_URL = "http://localhost:3000/favorite";
 const API_PAYMENT_URL = "http://localhost:3000/paypal";
 
 axios.defaults.withCredentials = true;
@@ -28,197 +26,11 @@ export const useProductStore = create(
       activeProducts: [],
       discountedProducts: [],
       productCategory: [],
-      cart: [],
       total: 0,
-      itemCount: 0,
-      favorites: [],
       order: [],
       seller: null,
-
-      toggleToFavorite: async (productId) => {
-        try {
-          const response = await axios.post(`${API_FAVORITE_URL}/toggle`, {
-            productId,
-          });
-
-          if (response.data.error) {
-            set({
-              error:
-                response.data.error ||
-                "Error occured while adding product to favorite",
-            });
-            return { error: response.data.error };
-          }
-
-          set((state) => {
-            if (response.data.isFavorite) {
-              return {
-                favorites: [...state.favorites, response.data.data],
-              };
-            } else {
-              return {
-                favorites: state.favorites.filter((fav) => {
-                  const favProductId = fav.productId?._id || fav._id;
-                  return favProductId !== productId;
-                }),
-              };
-            }
-          });
-
-          return {
-            success: true,
-            message: response.data.message,
-            isFavorite: response.data.isFavorite,
-          };
-        } catch (error) {
-          let errorMessage =
-            "An error occurred while adding product to favorite";
-
-          if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data?.error || error.message;
-          }
-
-          set({ error: errorMessage, isLoading: false });
-          throw Error(errorMessage);
-        }
-      },
-
-      // getFavorite: async () => {
-      //   try {
-      //     const response = await axios.get(`${API_CART_URL}/`);
-
-      //     set({
-      //       favorites: response.data.data,
-      //     });
-
-      //     return {
-      //       success: true,
-      //       data: response.data.data,
-      //     };
-      //   } catch (error) {
-      //     let errorMessage = "An error occurred while getting whishList";
-
-      //     if (axios.isAxiosError(error)) {
-      //       errorMessage = error.response?.data?.error || error.message;
-      //     }
-
-      //     set({ error: errorMessage, isLoading: false });
-      //     throw new Error(errorMessage);
-      //   }
-      // },
-
-      addToCart: async (productId, quantity = 1, selectedVariant) => {
-        try {
-          const response = await axios.post(`${API_CART_URL}/add`, {
-            productId,
-            quantity,
-            variant: selectedVariant,
-          });
-
-          if (response.data.error) {
-            set({ error: response.data.error });
-            return { error: response.data.error };
-          } else {
-            set({
-              cart: response.data.items || [],
-              total: response.data.total || 0,
-              itemCount: response.data.itemCount || 0,
-              error: null,
-              isLoading: false,
-            });
-            return { cart: response.data.cart };
-          }
-        } catch (error) {
-          let errorMessage = "An error occurred while adding product to cart";
-
-          if (axios.isAxiosError(error)) {
-            errorMessage = error.response?.data?.error || error.message;
-          }
-
-          set({ error: errorMessage, isLoading: false });
-          throw new Error(errorMessage);
-        }
-      },
-
-      getCart: async () => {
-        try {
-          const response = await axios.get(`${API_CART_URL}`, {
-            withCredentials: true,
-          });
-
-          set({
-            cart: response.data.items || [],
-            total: response.data.total || 0,
-            itemCount: response.data.itemCount || 0,
-            error: null,
-            isLoading: false,
-          });
-
-          return response.data.items;
-        } catch (error) {
-          console.error("Error fetching cart:", error);
-          let errorMessage = "An error occurred while loading cart";
-
-          if (error.response?.status === 401) {
-            errorMessage = "Please login to view your cart";
-          } else if (error.response?.data?.message) {
-            errorMessage = error.response.data.message;
-          }
-
-          set({
-            cart: [],
-            total: 0,
-            itemCount: 0,
-            error: errorMessage,
-            isLoading: false,
-          });
-          throw new Error(errorMessage);
-        }
-      },
-
-      updateQuantity: async (productId, quantity, size, colorTitle) => {
-        try {
-          const response = await axios.put(
-            `${API_CART_URL}/update/${productId}`,
-            { quantity, size, colorTitle },
-            { withCredentials: true }
-          );
-
-          // mettre à jour le store avec la réponse backend
-          set({
-            cart: response.data.items,
-            total: response.data.total,
-            itemCount: response.data.itemCount,
-          });
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.error || "Failed to update quantity";
-          set({ error: errorMessage });
-        }
-      },
-
-      deleteProductFromCart: async (productId, size, colorTitle) => {
-        try {
-          const response = await axios.delete(
-            `${API_CART_URL}/remove/${productId}`,
-            {
-              data: { size, colorTitle }, // Envoyer les données dans le body
-              withCredentials: true,
-            }
-          );
-
-          // mettre à jour le store avec la réponse backend
-          set({
-            cart: response.data.items,
-            total: response.data.total,
-            itemCount: response.data.itemCount,
-          });
-        } catch (error) {
-          const errorMessage =
-            error.response?.data?.error || "Failed to remove product from cart";
-          set({ error: errorMessage });
-        }
-      },
+      pendingProducts: [],
+      pendingPagination: null,
 
       checkout: async (total, items) => {
         try {
@@ -320,6 +132,7 @@ export const useProductStore = create(
 
       deleteImage: async (publicId) => {
         try {
+          set({ isLoading: true });
           const response = await axios.delete(
             `${API_URL}/delete_image/${encodeURIComponent(publicId)}`,
             { withCredentials: true }
@@ -334,6 +147,7 @@ export const useProductStore = create(
                   (img) => img.public_id !== publicId
                 ),
               })),
+              isLoading: false,
             }));
           } else {
             throw new Error(response.data.error || "Delete failed");
@@ -629,6 +443,29 @@ export const useProductStore = create(
         }
       },
 
+      // searchProducts: async (query) => {
+      //   set({ isLoading: true, error: null });
+      //   try {
+      //     const response = await axios.get(`${API_URL}/search`, {
+      //       params: { query }, // ?query=searchTerm
+      //     });
+
+      //     set({
+      //       products: response.data.products,
+      //       activeProducts: response.data.products.filter(
+      //         (p) => p.status === "active" && p.discount === 0
+      //       ),
+      //       discountedProducts: response.data.products.filter(
+      //         (p) => p.discount && p.discount > 0 && p.status === "active"
+      //       ),
+
+      //       isLoading: false,
+      //     });
+      //   } catch (err) {
+      //     set({ error: err.message, isLoading: false });
+      //   }
+      // },
+
       searchProducts: async (query) => {
         set({ isLoading: true, error: null });
         try {
@@ -651,12 +488,109 @@ export const useProductStore = create(
           set({ error: err.message, isLoading: false });
         }
       },
+
+      getPendingProducts: async (page = 1, limit = 10) => {
+        set({ isLoading: true });
+        try {
+          const response = await axios.get(
+            `${API_CLIENT_URL}/admin/pending-products?page=${page}&limit=${limit}`,
+            { withCredentials: true }
+          );
+
+          set({
+            pendingProducts: response.data.products,
+            pendingPagination: response.data.pagination,
+            isLoading: false,
+            error: null,
+          });
+
+          return response.data;
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.error ||
+            "Erreur lors de la récupération des produits en attente";
+          set({ error: errorMessage, isLoading: false });
+          throw new Error(errorMessage);
+        }
+      },
+
+      getAdminProductDetails: async (productId) => {
+        set({ isLoading: true });
+        try {
+          const response = await axios.get(
+            `
+      ${API_CLIENT_URL}/admin/product/${productId}`,
+            { withCredentials: true }
+          );
+
+          set({ isLoading: false, error: null });
+          return response.data.product;
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.error ||
+            "Erreur lors de la récupération des détails du produit";
+          set({ error: errorMessage, isLoading: false });
+          throw new Error(errorMessage);
+        }
+      },
+
+      approveProduct: async (productId) => {
+        set({ isLoading: true });
+        try {
+          const response = await axios.put(
+            `${API_CLIENT_URL}/admin/approve-product/${productId}`,
+            {},
+            { withCredentials: true }
+          );
+
+          // Mettre à jour la liste des produits en attente
+          set((state) => ({
+            pendingProducts: state.pendingProducts.filter(
+              (p) => p._id !== productId
+            ),
+            isLoading: false,
+            error: null,
+          }));
+
+          return response.data;
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.error ||
+            "Erreur lors de l'approbation du produit";
+          set({ error: errorMessage, isLoading: false });
+          throw new Error(errorMessage);
+        }
+      },
+
+      rejectProduct: async (productId, rejectionReason) => {
+        set({ isLoading: true });
+        try {
+          const response = await axios.put(
+            `${API_CLIENT_URL}/admin/reject-product/${productId}`,
+            { rejectionReason },
+            { withCredentials: true }
+          );
+
+          // Mettre à jour la liste des produits en attente
+          set((state) => ({
+            pendingProducts: state.pendingProducts.filter(
+              (p) => p._id !== productId
+            ),
+            isLoading: false,
+            error: null,
+          }));
+
+          return response.data;
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.error || "Erreur lors du rejet du produit";
+          set({ error: errorMessage, isLoading: false });
+          throw new Error(errorMessage);
+        }
+      },
     }),
     {
-      name: "product-storage", // clé dans localStorage
-      // partialize: (state) => ({
-      //   uploadedImages: state.uploadedImages,
-      // }),
+      name: "product-storage",
     }
   )
 );

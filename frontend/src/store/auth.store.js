@@ -121,6 +121,12 @@ export const useAuthStore = create(
         try {
           await axios.post(`${API_URL}/logout`);
           set({ user: null, isAuthenticated: false, isLoading: false });
+          localStorage.removeItem("user");
+          localStorage.removeItem("orders");
+          localStorage.removeItem("cart");
+          localStorage.removeItem("seller");
+          localStorage.removeItem("product-storage");
+          localStorage.removeItem("favorites");
         } catch (error) {
           set({ error: "Error logging out", isLoading: false });
           throw error;

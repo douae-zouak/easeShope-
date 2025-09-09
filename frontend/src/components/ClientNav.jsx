@@ -1,25 +1,36 @@
-import { useState } from "react";
-import { useProductStore } from "../store/product.store";
-import { useAuthStore } from "../store/auth.store";
-import { ShoppingCart, User, LogOut, Heart, Package } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
+import { useProductStore } from "../store/product.store";
+import { useAuthStore } from "../store/auth.store";
+import { useCartStore } from "../store/cart.store";
+
+import { ShoppingCart, User, LogOut, Heart, Package } from "lucide-react";
+import { useFavoriteStore } from "../store/favorite.store";
+
 const ClientNav = () => {
   const [open, setOpen] = useState(false);
 
-  const { getColor, getInitial, favorites, cart } = useProductStore();
+  const { getColor, getInitial } = useProductStore();
+  const { favorites, getFavorites } = useFavoriteStore();
+  const { cart } = useCartStore();
   const { user, logout } = useAuthStore();
-  const navigate = useNavigate();
 
-  const handleLogout = async () => {
-    await logout(); // ta fonction logout (clear store + appel backend)
-    navigate("/auth/login"); // redirection vers home
-  };
+  useEffect(() => {
+    getFavorites();
+  }, []);
+
+  const navigate = useNavigate();
 
   const API_URL = import.meta.env.VITE_API_URL;
   const photo = user?.profilePhoto ? `${API_URL}${user.profilePhoto}` : null;
+
+  const handleLogout = async () => {
+    await logout();
+    navigate("/auth/login");
+  };
 
   return (
     <div className="flex justify-between items-center px-6 py-3 shadow-lg bg-white">

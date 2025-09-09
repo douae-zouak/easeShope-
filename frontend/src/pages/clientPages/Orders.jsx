@@ -16,15 +16,21 @@ import {
   MoveLeft,
 } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useOrderStore } from "../../store/order.store";
 import { useEffect } from "react";
 
+import { useOrderStore } from "../../store/order.store";
+
 const Orders = () => {
-  const { clientOrders, getClientOrders } = useOrderStore();
   const [filterStatus, setFilterStatus] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [expandedOrder, setExpandedOrder] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
+
+  const { clientOrders, getClientOrders, isLoading } = useOrderStore();
+
+  useEffect(() => {
+    getClientOrders();
+  }, []);
 
   // Fonction pour obtenir la couleur du statut
   const getStatusColor = (status) => {
@@ -134,9 +140,13 @@ const Orders = () => {
     },
   };
 
-  useEffect(() => {
-    getClientOrders();
-  }, []);
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
@@ -161,6 +171,7 @@ const Orders = () => {
         </div>
       </div>
       {console.log("orders : ", clientOrders)}
+      {console.log("filteredOrders  : ", filteredOrders)}
 
       <div className="max-w-4xl mx-auto">
         <motion.h1

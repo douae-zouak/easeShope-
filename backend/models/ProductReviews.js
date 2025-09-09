@@ -1,26 +1,5 @@
 const mongoose = require("mongoose");
 
-// Sous-schéma pour les commentaires
-const commentSchema = new mongoose.Schema(
-  {
-    userId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
-      required: true,
-    },
-    comment: {
-      type: String,
-      maxlength: [500, "Le commentaire ne peut pas dépasser 500 caractères"],
-      trim: true,
-    },
-    likes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    dislikes: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    likeCount: { type: Number, default: 0 },
-    dislikeCount: { type: Number, default: 0 },
-  },
-  { timestamps: true }
-);
-
 const ProductReviewSchema = new mongoose.Schema(
   {
     userId: {
@@ -41,7 +20,11 @@ const ProductReviewSchema = new mongoose.Schema(
       index: true,
     },
     rating: { type: Number, min: 0, max: 5, required: true, index: true },
-    comments: [commentSchema],
+    comment: {
+      type: String,
+      maxlength: [500, "Le commentaire ne peut pas dépasser 500 caractères"],
+      trim: true,
+    },
   },
   {
     timestamps: true,

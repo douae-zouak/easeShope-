@@ -70,7 +70,7 @@ const UploadImages = ({ variants, imgVariants, setImgVariants }) => {
   });
 
   const imagesOfSelectedColor = useMemo(() => {
-    return uploadedImages.find((group) => group.color === color)?.images || []; 
+    return uploadedImages.find((group) => group.color === color)?.images || [];
   }, [uploadedImages, color]);
 
   const imageUrls = imagesOfSelectedColor.map((img) => img.url);
@@ -112,7 +112,14 @@ const UploadImages = ({ variants, imgVariants, setImgVariants }) => {
   return (
     <div className="w-full mx-auto p-6 bg-gray-50 mb-10 mt-7">
       <div className="flex flex-row justify-between items-center mb-7">
-        <h2 className="text-lg font-medium mb-4">Upload img</h2>
+        <div>
+          <h2 className="text-lg font-medium mb-2">Upload Images</h2>
+
+          <p className="block text-sm font-medium text-gray-700 ">
+            Choose product images depending on category variants
+            <span className="text-red-500 ml-1">*</span>
+          </p>
+        </div>
 
         {variants.length !== 0 && (
           <div className="flex gap-5 items-end">

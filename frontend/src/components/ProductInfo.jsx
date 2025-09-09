@@ -17,6 +17,7 @@ const ProductInfo = ({
       <div className="mb-6">
         <label className="text-md font-normal mb-2" htmlFor="product-name">
           Name Product
+          <span className="text-red-500 ml-1">*</span>
         </label>
         <input
           type="text"
@@ -34,6 +35,7 @@ const ProductInfo = ({
           htmlFor="product-description"
         >
           Description Product
+          <span className="text-red-500 ml-1">*</span>
         </label>
         <textarea
           className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500  transition-all duration-200"

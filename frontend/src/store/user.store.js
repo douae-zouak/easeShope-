@@ -12,6 +12,10 @@ export const useUserStore = create(
       error: null,
       isLoading: false,
       seller: [],
+      sellerActiveProducts: [],
+      sellerExperience: "1 day",
+      commentId: null,
+      commentProductId : null,
 
       getSellerById: async (userId) => {
         try {
@@ -31,6 +35,106 @@ export const useUserStore = create(
 
           set({ error: errorMessage, isLoading: false });
           throw new Error(errorMessage);
+        }
+      },
+
+      getSellerActiveProducts: async (sellerId) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(
+            `${API_URL}/getSellerActiveProducts/${sellerId}`
+          );
+
+          set({
+            sellerActiveProducts: response.data.activatedSellerProducts,
+            isLoading: false,
+          });
+        } catch (error) {
+          let errorMessage =
+            "An error occurred while getting seller active products";
+
+          if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.error || error.message;
+          }
+
+          set({ error: errorMessage, isLoading: false });
+          throw Error(errorMessage);
+        }
+      },
+
+      getSellerExperience: async (sellerId) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(
+            `${API_URL}/getSellerExperience/${sellerId}`
+          );
+
+          set({
+            sellerExperience: response.data.experience,
+            isLoading: false,
+          });
+        } catch (error) {
+          let errorMessage =
+            "An error occurred while getting seller experiences";
+
+          if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.error || error.message;
+          }
+
+          set({ error: errorMessage, isLoading: false });
+          throw Error(errorMessage);
+        }
+      },
+
+      commented: async (sellerId) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(
+            `${API_URL}/didCommented/${sellerId}`
+          );
+
+          if (!response.data.error) {
+            set({
+              commentId: response.data.commentId,
+              isLoading: false,
+            });
+          }
+        } catch (error) {
+          let errorMessage = "An error occurred while getting comment ID";
+
+          if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.error || error.message;
+          }
+
+          console.log("error : ", error);
+          set({ error: errorMessage, isLoading: false });
+          throw Error(errorMessage);
+        }
+      },
+
+      commentedProduct: async (productId) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(
+            `${API_URL}/didCommentedProduct/${productId}`
+          );
+
+          if (!response.data.error) {
+            set({
+              commentProductId: response.data.commentId,
+              isLoading: false,
+            });
+          }
+        } catch (error) {
+          let errorMessage = "An error occurred while getting comment ID";
+
+          if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.error || error.message;
+          }
+
+          console.log("error : ", error);
+          set({ error: errorMessage, isLoading: false });
+          throw Error(errorMessage);
         }
       },
     }),

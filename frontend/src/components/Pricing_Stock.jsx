@@ -19,6 +19,7 @@ const Pricing_Stock = ({
             htmlFor="product-price"
           >
             Base Pricing
+            <span className="text-red-500 ml-1">*</span>
           </label>
           <div className="relative">
             <input

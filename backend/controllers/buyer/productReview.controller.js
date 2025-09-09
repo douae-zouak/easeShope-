@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
-const SellerReview = require("../../models/SellerReviews");
+const ProductReview = require("../../models/ProductReviews");
 const Order = require("../../models/Order.model");
 
 exports.addReview = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    const { sellerId, rating, comment } = req.body;
+    const { productId, rating, comment } = req.body;
 
     if (!rating) {
       return res.json({
@@ -18,36 +18,36 @@ exports.addReview = async (req, res, next) => {
 
     if (!order || order.length === 0) {
       return res.json({
-        error: "your didn't make any order for this seller to rate him",
+        error: "your didn't make any order for this product to rate it",
       });
     }
 
-    const hasSellerProducts = order.some((o) =>
+    const hasProduct = order.some((o) =>
       o.items.some(
-        (item) => item.sellerId && item.sellerId.toString() === sellerId
+        (item) => item.productId && item.productId.toString() === productId
       )
     );
 
-    if (!hasSellerProducts) {
+    if (!hasProduct) {
       return res.json({
-        error: "your didn't make any order for this seller to rate him",
+        error: "your didn't make any order for this product to rate it",
       });
     }
 
-    const existingReview = await SellerReview.findOne({
+    const existingReview = await ProductReview.findOne({
       userId: userId,
-      sellerId: sellerId,
+      productId: productId,
     });
 
     if (existingReview) {
       return res.json({
-        error: "You have already rated this seller",
+        error: "You have already rated this product",
       });
     }
 
-    const sellerReview = await SellerReview.create({
+    const productReviews = await ProductReview.create({
       userId,
-      sellerId,
+      productId,
       orderId: order[0]._id,
       rating,
       comment: comment,
@@ -55,47 +55,47 @@ exports.addReview = async (req, res, next) => {
 
     res.status(201).json({
       message: "Review added with success",
-      sellerReview: sellerReview,
+      productReviews: productReviews,
     });
   } catch (error) {
     next(error);
   }
 };
 
-exports.getSellerReviews = async (req, res, next) => {
+exports.getProductReviews = async (req, res, next) => {
   try {
-    const { sellerId } = req.params;
+    const { productId } = req.params;
 
     // Validation basique
-    if (!sellerId || !mongoose.Types.ObjectId.isValid(sellerId)) {
+    if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
-        error: "Ivalid seller ID",
+        error: "Ivalid product ID",
       });
     }
 
     // Pagination
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 10;
+    const limit = parseInt(req.query.limit) || 5;
     const skip = (page - 1) * limit;
 
-    const reviews = await SellerReview.find({ sellerId: sellerId })
+    const reviews = await ProductReview.find({ productId: productId })
       .populate({
         path: "userId",
-        select: "fullName profilePhoto email", // Sélectionnez les champs nécessaires
-        model: mongoose.model("user"), // Référence directe via mongoose
-      }) // Infos de l'utilisateur
+        select: "fullName profilePhoto email",
+        model: mongoose.model("user"),
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .lean(); // Pour de meilleures performances
+      .lean();
 
     // Compter le total pour la pagination
-    const totalReviews = await SellerReview.countDocuments({
-      sellerId: sellerId,
+    const totalReviews = await ProductReview.countDocuments({
+      productId: productId,
     });
     const totalPages = Math.ceil(totalReviews / limit);
 
-    const stats = await SellerReview.getAverageRating(sellerId);
+    const stats = await ProductReview.getAverageRating(productId);
 
     res.status(200).json({
       reviews: reviews,
@@ -122,14 +122,14 @@ exports.deleteComment = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid review ID" });
     }
 
-    const deletedReview = await SellerReview.findByIdAndDelete(reviewId);
+    const deletedReview = await ProductReview.findByIdAndDelete(reviewId);
 
     // Vérifier si le document existait
     if (!deletedReview) {
       return res.status(404).json({ error: "Review not found" });
     }
 
-    const reviews = await SellerReview.find();
+    const reviews = await ProductReview.find();
 
     res.status(200).json({
       message: "Review deleted with success",

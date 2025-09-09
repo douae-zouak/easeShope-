@@ -1,11 +1,11 @@
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import { useProductStore } from "../../store/product.store";
 import { Link, useNavigate } from "react-router-dom";
 import { MoveLeft } from "lucide-react";
+import { useFavoriteStore } from "../../store/favorite.store";
 
 const LikePage = () => {
-  const { favorites, toggleToFavorite } = useProductStore();
+  const { favorites, toggleToFavorite } = useFavoriteStore();
 
   const removeLikedProduct = (id) => {
     toggleToFavorite(id);

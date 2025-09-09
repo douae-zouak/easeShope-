@@ -9,7 +9,7 @@ import { useState } from "react";
 const ProductsPage = () => {
   const navigate = useNavigate();
 
-  const { getProducts, products, pagination, deleteProduct } =
+  const { getProducts, products, pagination, deleteProduct, isLoading } =
     useProductStore();
 
   // États pour les filtres et la pagination
@@ -71,6 +71,14 @@ const ProductsPage = () => {
       }
     }
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-gray-100 rounded-xl shadow-md mb-12 mt-5">

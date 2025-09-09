@@ -6,7 +6,7 @@ import { useAuthStore } from "./store/auth.store";
 import AddProductPage from "./pages/adminPages/AddProductPage";
 import ProfilePage from "./pages/adminPages/ProfilePage";
 import ClientProfilePage from "./pages/clientPages/ProfilePage";
-import ProductsPage from "./pages/adminPages/productsPage";
+import ProductsPage from "./pages/adminPages/ProductsPage";
 import OrdersPage from "./pages/adminPages/OrdersPage";
 import ForgotPasswordPage from "./pages/authPages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/authPages/ResetPasswordPage";
@@ -43,6 +43,7 @@ import { useEffect } from "react";
 import LikePage from "./pages/clientPages/LikePage";
 import Orders from "./pages/clientPages/Orders";
 import SellerInfoPage from "./pages/clientPages/SellerInfoPage";
+import AdminProductDetailsPage from "./pages/adminSupPages/AdminProductDetailsPage";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -143,6 +144,10 @@ const AdminRoutes = () => (
         <Route
           path="products-activation"
           element={<ProductsActivationPage />}
+        />
+        <Route
+          path="product-details/:id"
+          element={<AdminProductDetailsPage />}
         />
         <Route path="returns-requests" element={<ReturnsRequestsPage />} />
         <Route path="vendors" element={<VendorsPage />} />

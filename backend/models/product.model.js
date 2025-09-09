@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const variantSchema = new mongoose.Schema({
   size: {
     type: String,
-    required: true,
   },
   stock: {
     type: Number,
@@ -43,7 +42,12 @@ variantSchema.pre("validate", function (next) {
   if (!this.sku) {
     // Exemple de génération de SKU : NOMDU PRODUIT-Taille-Couleur
     const productName = this.ownerDocument().name || "PRODUCT";
-    this.sku = `${productName.toUpperCase()}-${this.size.toUpperCase()}-${this.color.toUpperCase()}`;
+    const productID = parent?._id?.toString().slice(-6) || "ID";
+    const color = this.color ? this.color.toUpperCase() : "COLOR";
+
+    this.sku = `${productName
+      .toUpperCase()
+      .replace(/\s+/g, "")}-${productID}-${color}`;
   }
   next();
 });
@@ -86,7 +90,6 @@ const productSchema = new mongoose.Schema(
         "Jackets",
         "Sweaters",
         "Shoes",
-        "Accessories",
         "Cookware",
         "Bedding",
         "Decor",
@@ -95,7 +98,6 @@ const productSchema = new mongoose.Schema(
         "Skincare",
         "Makeup",
         "Hair Care",
-        "Accessories",
         "Fitness Equipment",
         "Athletic Shoes",
         "Apparel",
@@ -155,7 +157,7 @@ const productSchema = new mongoose.Schema(
 
     seller: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Nom du modèle référencé
+      ref: "user", // Nom du modèle référencé
       required: true,
     },
   },

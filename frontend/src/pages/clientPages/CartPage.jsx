@@ -1,15 +1,21 @@
 import { useEffect } from "react";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
-import { useProductStore } from "../../store/product.store";
 import PaymentSidebar from "../../components/PaymentSidebar";
 import CartFooter from "../../components/CartFooter";
 import CheckoutHeader from "../../components/CheckoutHeader";
 import CartItem from "../../components/CartItem";
+import { useCartStore } from "../../store/cart.store";
 
 export default function CartPage() {
-  const { getCart, cart, updateQuantity, deleteProductFromCart, total } =
-    useProductStore();
+  const {
+    getCart,
+    cart,
+    updateQuantity,
+    deleteProductFromCart,
+    total,
+    isLoading,
+  } = useCartStore();
 
   useEffect(() => {
     getCart();
@@ -34,6 +40,14 @@ export default function CartPage() {
             </Link>
           </div>
         </div>
+      </div>
+    );
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
       </div>
     );
   }

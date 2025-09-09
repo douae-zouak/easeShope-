@@ -3,12 +3,11 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { useProductStore } from "../store/product.store";
 import toast from "react-hot-toast";
+import { useFavoriteStore } from "../store/favorite.store";
 
 const ClientProductCard = ({ product }) => {
-  const { toggleToFavorite } = useProductStore();
-  const { favorites } = useProductStore();
+  const { toggleToFavorite, favorites } = useFavoriteStore();
 
   const isLiked = favorites.some((fav) => fav.productId._id === product._id);
 
@@ -32,15 +31,24 @@ const ClientProductCard = ({ product }) => {
   };
 
   const handleProductLike = async () => {
-    setLiked(!liked);
+    try {
+      const res = await toggleToFavorite(product._id);
 
-    const res = await toggleToFavorite(product._id);
+      if (res.error) {
+        return toast.error(res.error);
+      }
+      setLiked(!liked);
 
-    if (res.error) {
-      return toast.error(res.error);
+      toast.success(res.message);
+    } catch (error) {
+      if (error.message?.includes("No refresh token")) {
+        toast.error("Please login to add products to whishlist");
+      } else {
+        toast.error(
+          `Error adding product to whishlist: ${error.message || error}`
+        );
+      }
     }
-
-    toast.success(res.message);
   };
 
   return (

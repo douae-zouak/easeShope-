@@ -54,25 +54,25 @@ exports.toggleToFavorite = async (req, res, next) => {
   }
 };
 
-// exports.getFavorite = async (req, res, next) => {
-//   try {
-//     const userId = req.user._id;
+exports.getFavorite = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
 
-//     // Récupérer les favoris avec les produits populés
-//     const favorites = await Favorite.find({ userId }).populate({
-//       path: "productId",
-//       select:
-//         "name price discount imagesVariant category originalPrice stock status",
-//     });
+    // Récupérer les favoris avec les produits populés
+    const favorites = await Favorite.find({ userId }).populate({
+      path: "productId",
+      select:
+        "name price discount imagesVariant category originalPrice stock status",
+    });
 
-//     // Même s'il n'y a pas de favoris, c'est une réponse valide
-//     res.status(200).json({
-//       success: true,
-//       count: favorites.length,
-//       data: favorites || [], // Toujours renvoyer un tableau
-//     });
-//   } catch (error) {
-//     console.error("Erreur dans getFavorite:", error);
-//     next(error);
-//   }
-// };
+    // Même s'il n'y a pas de favoris, c'est une réponse valide
+    res.status(200).json({
+      success: true,
+      count: favorites.length,
+      data: favorites || [], // Toujours renvoyer un tableau
+    });
+  } catch (error) {
+    console.error("Erreur dans getFavorite:", error);
+    next(error);
+  }
+};
