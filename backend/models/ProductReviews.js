@@ -7,24 +7,41 @@ const ProductReviewSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+
     productId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Product",
       required: true,
       index: true,
     },
+
     orderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Order",
       required: true,
       index: true,
     },
+
     rating: { type: Number, min: 0, max: 5, required: true, index: true },
+
     comment: {
       type: String,
       maxlength: [500, "Le commentaire ne peut pas dépasser 500 caractères"],
       trim: true,
     },
+
+    images: [
+      {
+        url: {
+          type: String,
+          required: true,
+        },
+        publicId: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   {
     timestamps: true,

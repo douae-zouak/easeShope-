@@ -160,6 +160,15 @@ const productSchema = new mongoose.Schema(
       ref: "user", // Nom du modèle référencé
       required: true,
     },
+
+    rejectionReason: {
+      type: String,
+      trim: true,
+      maxlength: [
+        500,
+        "La raison de rejet ne peut pas dépasser 500 caractères",
+      ],
+    },
   },
   {
     timestamps: true,

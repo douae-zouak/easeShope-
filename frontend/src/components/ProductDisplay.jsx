@@ -1,7 +1,6 @@
 import { useEffect } from "react";
 import { useProductStore } from "../store/product.store";
 import { Info } from "lucide-react";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import ClientProductCard from "./ClientProductCard";
@@ -15,26 +14,30 @@ const ProductDisplay = () => {
   }, []);
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       {/* Produits en promotion */}
       {discountedProducts.length > 0 && (
-        <div className="mb-12">
-          <div className="flex flex-col md:flex-row justify-between items-center mb-10">
+        <div className="mb-16">
+          <div className="flex flex-col md:flex-row justify-between items-center mb-12">
             <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true }}
-              className="text-3xl md:text-4xl font-bold text-gray-900"
+              initial={{ opacity: 0, x: -20 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.6, ease: "easeOut" }}
+              viewport={{ once: true, margin: "-50px" }}
+              className="text-3xl md:text-4xl font-light text-gray-900 tracking-tight mb-4 md:mb-0"
             >
-              Promotion Products
+              <span className="font-medium">Special Offers</span> & Promotions
             </motion.h2>
             <Link to="/discount-product">
-              <button className="text-purple-600 text-md font-medium flex items-center hover:text-purple-700 transition-colors cursor-pointer">
-                See More
+              <motion.button
+                whileHover={{ x: 5 }}
+                transition={{ type: "spring", stiffness: 400, damping: 10 }}
+                className="text-gray-600 hover:text-gray-900 text-sm font-normal flex items-center transition-colors cursor-pointer pb-1"
+              >
+                View all promotions
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
-                  className="h-5 w-5 ml-1"
+                  className="h-4 w-4 ml-2"
                   viewBox="0 0 20 20"
                   fill="currentColor"
                 >
@@ -44,35 +47,45 @@ const ProductDisplay = () => {
                     clipRule="evenodd"
                   />
                 </svg>
-              </button>
+              </motion.button>
             </Link>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, staggerChildren: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {discountedProducts.map((product) => (
               <ClientProductCard key={product._id} product={product} />
             ))}
-          </div>
+          </motion.div>
         </div>
       )}
 
       {/* Produits actifs */}
-      <div className="mb-12">
-        <div className="flex flex-col md:flex-row justify-between items-center mb-10">
+      <div className="mb-16">
+        <div className="flex flex-col md:flex-row justify-between items-center mb-12">
           <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-gray-900"
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6, ease: "easeOut" }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="text-3xl md:text-4xl font-light text-gray-900 tracking-tight mb-4 md:mb-0"
           >
-            You Might Like
+            <span className="font-medium">Featured</span> Collection
           </motion.h2>
           <Link to="/products">
-            <button className="text-purple-600 text-md font-medium flex items-center hover:text-purple-700 transition-colors cursor-pointer">
-              See More
+            <motion.button
+              whileHover={{ x: 5 }}
+              transition={{ type: "spring", stiffness: 400, damping: 10 }}
+              className="text-gray-600 hover:text-gray-900 text-sm font-normal flex items-center transition-colors cursor-pointer pb-1"
+            >
+              Browse all products
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 ml-1"
+                className="h-4 w-4 ml-2"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -82,34 +95,55 @@ const ProductDisplay = () => {
                   clipRule="evenodd"
                 />
               </svg>
-            </button>
+            </motion.button>
           </Link>
         </div>
 
         {activeProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, staggerChildren: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8"
+          >
             {activeProducts.map((product) => (
               <ClientProductCard key={product._id} product={product} />
             ))}
-          </div>
+          </motion.div>
         ) : (
-          <div className="text-center py-12">
-            <Info className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <p className="text-gray-500 text-lg">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            viewport={{ once: true }}
+            className="text-center py-16"
+          >
+            <Info className="h-16 w-16 text-gray-300 mx-auto mb-5" />
+            <p className="text-gray-400 text-lg font-light">
               No products available at the moment.
             </p>
-          </div>
+          </motion.div>
         )}
       </div>
 
       {/* Message si aucun produit n'est disponible */}
       {activeProducts.length === 0 && discountedProducts.length === 0 && (
-        <div className="text-center py-12">
-          <Info className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-500 text-lg">
-            No products available at the moment.
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          viewport={{ once: true }}
+          className="text-center py-20"
+        >
+          <Info className="h-20 w-20 text-gray-300 mx-auto mb-6" />
+          <p className="text-gray-400 text-xl font-light mb-2">
+            Our collection is currently being updated
           </p>
-        </div>
+          <p className="text-gray-400 text-lg font-light">
+            Check back soon for new arrivals
+          </p>
+        </motion.div>
       )}
     </div>
   );

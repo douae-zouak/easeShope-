@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { cloudinary } = require("../../config/cloudinary.config");
 
 const ProductReview = require("../../models/ProductReviews");
 const Order = require("../../models/Order.model");
@@ -8,7 +9,29 @@ exports.addReview = async (req, res, next) => {
     const userId = req.user._id;
     const { productId, rating, comment } = req.body;
 
+    // Avec Cloudinary Storage, les fichiers sont déjà uploadés
+    // req.files contient les informations de Cloudinary
+    const uploadedImages = req.files
+      ? req.files.map((file) => ({
+          url: file.path, // URL de l'image sur Cloudinary
+          publicId: file.filename || file.public_id, // Public ID Cloudinary (sans l'extension)
+        }))
+      : [];
+
     if (!rating) {
+      // Supprimer les images uploadées si la validation échoue
+      if (uploadedImages.length > 0) {
+        for (const image of uploadedImages) {
+          try {
+            await cloudinary.uploader.destroy(image.publicId);
+          } catch (error) {
+            console.error(
+              "Error deleting image after validation failure:",
+              error
+            );
+          }
+        }
+      }
       return res.json({
         error: "please add at least rating",
       });
@@ -17,6 +40,19 @@ exports.addReview = async (req, res, next) => {
     const order = await Order.find({ userId: userId });
 
     if (!order || order.length === 0) {
+      // Supprimer les images uploadées si la validation échoue
+      if (uploadedImages.length > 0) {
+        for (const image of uploadedImages) {
+          try {
+            await cloudinary.uploader.destroy(image.publicId);
+          } catch (error) {
+            console.error(
+              "Error deleting image after validation failure:",
+              error
+            );
+          }
+        }
+      }
       return res.json({
         error: "your didn't make any order for this product to rate it",
       });
@@ -29,6 +65,19 @@ exports.addReview = async (req, res, next) => {
     );
 
     if (!hasProduct) {
+      // Supprimer les images uploadées si la validation échoue
+      if (uploadedImages.length > 0) {
+        for (const image of uploadedImages) {
+          try {
+            await cloudinary.uploader.destroy(image.publicId);
+          } catch (error) {
+            console.error(
+              "Error deleting image after validation failure:",
+              error
+            );
+          }
+        }
+      }
       return res.json({
         error: "your didn't make any order for this product to rate it",
       });
@@ -40,6 +89,19 @@ exports.addReview = async (req, res, next) => {
     });
 
     if (existingReview) {
+      // Supprimer les images uploadées si la validation échoue
+      if (uploadedImages.length > 0) {
+        for (const image of uploadedImages) {
+          try {
+            await cloudinary.uploader.destroy(image.publicId);
+          } catch (error) {
+            console.error(
+              "Error deleting image after validation failure:",
+              error
+            );
+          }
+        }
+      }
       return res.json({
         error: "You have already rated this product",
       });
@@ -51,6 +113,7 @@ exports.addReview = async (req, res, next) => {
       orderId: order[0]._id,
       rating,
       comment: comment,
+      images: uploadedImages,
     });
 
     res.status(201).json({
@@ -58,10 +121,24 @@ exports.addReview = async (req, res, next) => {
       productReviews: productReviews,
     });
   } catch (error) {
+    // En cas d'erreur, supprimer les images déjà uploadées
+    if (req.files && req.files.length > 0) {
+      for (const file of req.files) {
+        try {
+          await cloudinary.uploader.destroy(file.filename); // Utiliser file.filename comme publicId
+        } catch (deleteError) {
+          console.error(
+            "Error deleting image after operation failure:",
+            deleteError
+          );
+        }
+      }
+    }
     next(error);
   }
 };
 
+// Modifier getProductReviews pour inclure les images
 exports.getProductReviews = async (req, res, next) => {
   try {
     const { productId } = req.params;
@@ -69,7 +146,7 @@ exports.getProductReviews = async (req, res, next) => {
     // Validation basique
     if (!productId || !mongoose.Types.ObjectId.isValid(productId)) {
       return res.status(400).json({
-        error: "Ivalid product ID",
+        error: "Invalid product ID",
       });
     }
 
@@ -113,6 +190,7 @@ exports.getProductReviews = async (req, res, next) => {
   }
 };
 
+// Modifier deleteComment pour supprimer aussi les images de Cloudinary
 exports.deleteComment = async (req, res, next) => {
   try {
     const { reviewId } = req.params;
@@ -122,12 +200,27 @@ exports.deleteComment = async (req, res, next) => {
       return res.status(400).json({ error: "Invalid review ID" });
     }
 
-    const deletedReview = await ProductReview.findByIdAndDelete(reviewId);
+    const reviewToDelete = await ProductReview.findById(reviewId);
 
-    // Vérifier si le document existait
-    if (!deletedReview) {
+    if (!reviewToDelete) {
       return res.status(404).json({ error: "Review not found" });
     }
+
+    // Supprimer les images de Cloudinary
+    if (reviewToDelete.images && reviewToDelete.images.length > 0) {
+      for (const image of reviewToDelete.images) {
+        try {
+          await cloudinary.uploader.destroy(image.publicId);
+        } catch (cloudinaryError) {
+          console.error(
+            "Error deleting image from Cloudinary:",
+            cloudinaryError
+          );
+        }
+      }
+    }
+
+    const deletedReview = await ProductReview.findByIdAndDelete(reviewId);
 
     const reviews = await ProductReview.find();
 

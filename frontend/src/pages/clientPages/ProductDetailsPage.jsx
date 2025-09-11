@@ -15,6 +15,7 @@ import CustumerProductReviews from "../../components/CustumerProductReviews";
 import AddProductReview from "../../components/AddProductReview";
 import { useCommentStore } from "../../store/comment.store";
 import { useUserStore } from "../../store/user.store";
+import { useAuthStore } from "../../store/auth.store";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
@@ -23,23 +24,27 @@ const ProductDetailsPage = () => {
   const [seller, setSeller] = useState(null);
 
   const [selectedVariant, setSelectedVariant] = useState(null);
-  const [newReview, setNewReview] = useState({
-    rating: 5,
-    comment: "",
-  });
+  const [currentPage, setCurrentPage] = useState(1); // Ajout pour la pagination
+  const itemsPerPage = 5; // Définition du nombre d'items par page
+  // const [newReview, setNewReview] = useState({
+  //   rating: 5,
+  //   comment: "",
+  // });
 
   const { getProductById, isLoading } = useProductStore();
   const { getProductReviews, productReviews } = useCommentStore();
   const { commentedProduct, commentProductId } = useUserStore();
+  const { isAuthenticated } = useAuthStore();
 
   const navigate = useNavigate();
 
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    getProductReviews(id);
+    // Modifiez cet appel
+    getProductReviews(id, currentPage, itemsPerPage);
     commentedProduct(id);
-  }, [refresh, id]);
+  }, [refresh, id, currentPage]); // Ajoutez currentPage aux dépendances
 
   useEffect(() => {
     const loadProductData = async () => {
@@ -147,7 +152,7 @@ const ProductDetailsPage = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-2 mt-10 ">
+        <div className=" mt-10 flex ">
           <CustumerProductReviews
             productReviews={productReviews}
             renderStars={renderStars}
@@ -155,12 +160,17 @@ const ProductDetailsPage = () => {
           />
 
           {/* Add Review Section */}
-          <AddProductReview
-            setNewReview={setNewReview}
-            newReview={newReview}
-            setRefresh={setRefresh}
-            productId={id}
-          />
+          {isAuthenticated && commentProductId && (
+            <AddProductReview
+              onReviewAdded={() => {
+                // Rafraîchir les avis après ajout
+                setRefresh((prev) => !prev);
+                // Réinitialiser à la première page pour voir le nouvel avis
+                setCurrentPage(1);
+              }}
+              productId={id}
+            />
+          )}
         </div>
       </div>
     </div>

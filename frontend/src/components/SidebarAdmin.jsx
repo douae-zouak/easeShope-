@@ -53,7 +53,10 @@ const SidebarAdmin = () => {
             <SidebarItem
               icon={<Package size={20} />}
               text="Products"
-              active={isActive("/admin/products-activation")}
+              active={
+                isActive("/admin/products-activation") ||
+                location.pathname.startsWith("/admin/product-details/")
+              }
               link="/admin/products-activation"
             />
             <SidebarItem
