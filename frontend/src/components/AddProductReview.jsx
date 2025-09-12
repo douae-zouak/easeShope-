@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { useRef, useState } from "react";
-import { Star, Upload, Send, X } from "lucide-react"; // Ajout des imports manquants
+import { Star, Upload, Send, X, ImagePlus } from "lucide-react"; // Ajout des imports manquants
 import { useCommentStore } from "../store/comment.store";
 
 const AddReview = ({ productId, onReviewAdded }) => {
@@ -126,7 +126,7 @@ const AddReview = ({ productId, onReviewAdded }) => {
       </div>
 
       {/* Comment Section */}
-      <div className="mb-6">
+      <div className="mb-6 relative">
         <label
           htmlFor="comment"
           className="block text-sm font-medium text-gray-700 mb-3"
@@ -135,8 +135,8 @@ const AddReview = ({ productId, onReviewAdded }) => {
         </label>
         <textarea
           id="comment"
-          rows="4"
-          className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-transparent outline-none transition-all resize-none ${
+          rows="2"
+          className={`w-full px-4 py-3 border border-gray-200 rounded-xl focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 outline-none transition-all resize-none ${
             isLoading ? "opacity-50 bg-gray-100" : ""
           }`}
           value={newReview.comment}
@@ -146,14 +146,20 @@ const AddReview = ({ productId, onReviewAdded }) => {
           placeholder="Share your experience with this product..."
           disabled={isLoading} // Désactiver pendant le chargement
         ></textarea>
+        <ImagePlus
+          className={`absolute bottom-5 right-3 text-gray-500 ${
+            isLoading
+              ? "border-gray-200 text-gray-400 bg-gray-100 cursor-not-allowed"
+              : "border-gray-300 text-gray-500 hover:text-gray-800"
+          }`}
+          size={20}
+          onClick={() => !isLoading && fileInputRef.current.click()}
+          disabled={isLoading}
+        />
       </div>
 
       {/* Image Upload Section */}
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-3">
-          Add Photos (Optional)
-        </label>
-
         <input
           type="file"
           ref={fileInputRef}
@@ -163,22 +169,6 @@ const AddReview = ({ productId, onReviewAdded }) => {
           className="hidden"
           disabled={isLoading} // Désactiver pendant le chargement
         />
-
-        <motion.button
-          type="button"
-          whileHover={{ scale: isLoading ? 1 : 1.02 }} // Désactiver l'animation pendant le chargement
-          whileTap={{ scale: isLoading ? 1 : 0.98 }}
-          onClick={() => !isLoading && fileInputRef.current.click()}
-          className={`flex items-center justify-center gap-2 w-full p-4 border-2 border-dashed rounded-xl transition-colors mb-4 ${
-            isLoading
-              ? "border-gray-200 text-gray-400 bg-gray-100 cursor-not-allowed"
-              : "border-gray-300 text-gray-500 hover:border-purple-400 hover:text-purple-600"
-          }`}
-          disabled={isLoading} // Désactiver pendant le chargement
-        >
-          <Upload size={20} />
-          <span>{isLoading ? "Uploading..." : "Click to upload images"}</span>
-        </motion.button>
 
         <AnimatePresence>
           {imagePreviews.length > 0 && (
@@ -190,7 +180,7 @@ const AddReview = ({ productId, onReviewAdded }) => {
             >
               {imagePreviews.map((preview, index) => (
                 <motion.div
-                  key={index}
+                  key={images[index].name + "-" + index}
                   className="relative rounded-lg overflow-hidden shadow-md group"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}
@@ -218,22 +208,15 @@ const AddReview = ({ productId, onReviewAdded }) => {
             </motion.div>
           )}
         </AnimatePresence>
-
-        {imagePreviews.length > 0 && (
-          <p className="text-xs text-gray-500 mt-2">
-            {imagePreviews.length} of 4 images uploaded
-          </p>
-        )}
       </div>
 
       {/* Submit Button */}
       <motion.button
-        whileHover={{ scale: isLoading ? 1 : 1.02 }} // Désactiver l'animation pendant le chargement
+        whileHover={{ scale: isLoading ? 1 : 1.02 }}
         whileTap={{ scale: isLoading ? 1 : 0.98 }}
         onClick={handleAddReview}
-        disabled={!newReview.comment.trim() || isLoading}
         className={`flex items-center justify-center gap-2 w-full py-3 px-4 rounded-xl font-medium transition-all ${
-          !newReview.comment.trim() || isLoading
+          isLoading
             ? "bg-gray-300 text-gray-500 cursor-not-allowed"
             : "bg-gradient-to-r from-purple-600 to-indigo-600 text-white hover:shadow-lg"
         }`}

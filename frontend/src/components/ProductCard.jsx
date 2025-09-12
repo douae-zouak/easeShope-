@@ -45,6 +45,11 @@ const ProductCard = ({ product, onEdit, onDelete, onView }) => {
       icon: <SquarePen className="w-3.5 h-3.5" />,
       text: "Draft",
     },
+    rejected: {
+      color: "bg-red-200 text-red-700 border-red-300",
+      icon: <XCircle className="w-3.5 h-3.5" />,
+      text: "Rejected",
+    },
   };
 
   const { color, icon, text } = statusConfig[product.status];

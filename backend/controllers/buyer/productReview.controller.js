@@ -152,7 +152,7 @@ exports.getProductReviews = async (req, res, next) => {
 
     // Pagination
     const page = parseInt(req.query.page) || 1;
-    const limit = parseInt(req.query.limit) || 5;
+    const limit = parseInt(req.query.limit) || 1;
     const skip = (page - 1) * limit;
 
     const reviews = await ProductReview.find({ productId: productId })
@@ -232,3 +232,5 @@ exports.deleteComment = async (req, res, next) => {
     next(error);
   }
 };
+
+

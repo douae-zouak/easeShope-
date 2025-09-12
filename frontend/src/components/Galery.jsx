@@ -23,7 +23,7 @@ const Galery = ({ selectedVariant, product }) => {
   };
   return (
     <div className="md:w-1/2">
-      <div className="sticky top-0 ">
+      <div className="sticky top-20">
         {/* Image principale */}
         <div className="relative aspect-square overflow-hidden rounded-xl bg-white shadow-lg">
           {selectedColorImages.length > 0 ? (

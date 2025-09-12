@@ -2,9 +2,12 @@
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { useCommentStore } from "../store/comment.store";
-import { Trash2 } from "lucide-react";
+import { Trash2, X } from "lucide-react";
+import { useState } from "react";
 
 const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
+  const [selectedImage, setSelectedImage] = useState(null);
+
   const { deleteProductComment } = useCommentStore();
 
   const onDelete = async (reviewId) => {
@@ -29,9 +32,9 @@ const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
       className="bg-white rounded-xl shadow-xl mb-8 overflow-hidden border border-gray-100 flex-1"
     >
       <div className="p-6">
-        <h2 className="text-xl font-bold text-gray-900 mb-6">
+        <h1 className="text-gray-900 text-2xl font-medium font-title ">
           Customer Reviews
-        </h2>
+        </h1>
 
         <AnimatePresence>
           {productReviews.length > 0 ? (
@@ -65,18 +68,42 @@ const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
                       <div className="flex">{renderStars(review.rating)}</div>
                     </div>
                     <p className="mt-2 text-gray-600">{review.comment}</p>
+
+                    {/* Affichage des images */}
+                    {review.images && review.images.length > 0 && (
+                      <div className="mt-3 flex flex-wrap gap-2">
+                        {review.images.map((img, index) => (
+                          <div key={img.url} className="relative group">
+                            <img
+                              src={img.url} // Utilise directement l'URL Cloudinary
+                              alt={`Review image ${index + 1}`}
+                              className="w-24 h-24 object-cover rounded-md border border-gray-200 cursor-pointer transition-transform duration-200 hover:scale-105"
+                              onClick={() => setSelectedImage(img.url)}
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </div>
                 </div>
+
+                {/* Modal pour agrandir l'image */}
+                {selectedImage && (
+                  <div
+                    className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 "
+                    onClick={() => setSelectedImage(null)} // Clique pour fermer
+                  >
+                    <img
+                      src={selectedImage}
+                      alt="Enlarged"
+                      className="max-w-[90%] max-h-[90%] object-contain rounded-lg shadow-lg"
+                    />
+                  </div>
+                )}
+
                 {commentId && review._id === commentId && (
                   <div className="absolute bottom-0 right-0">
                     <div className="flex space-x-2">
-                      {/* <button
-                                // onClick={() => onEdit(product._id)}
-                                className="p-2 text-gray-600 hover:text-purple-600 hover:bg-purple-50 rounded-full transition-colors"
-                                aria-label="Edit product"
-                              >
-                                <Edit2 className="w-4 h-4" />
-                              </button> */}
                       <button
                         onClick={() => onDelete(review._id)}
                         className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-full transition-colors"
@@ -108,9 +135,6 @@ const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
               <h3 className="mt-2 text-sm font-medium text-gray-900">
                 No reviews yet
               </h3>
-              <p className="mt-1 text-sm text-gray-500">
-                Be the first to review this seller.
-              </p>
             </div>
           )}
         </AnimatePresence>

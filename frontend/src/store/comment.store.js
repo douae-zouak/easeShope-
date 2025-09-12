@@ -15,6 +15,7 @@ export const useCommentStore = create(
     sellerReviews: [],
     pagination: null,
     stats: null,
+    productStats: null,
 
     getSellerReviews: async (sellerId) => {
       try {
@@ -115,7 +116,7 @@ export const useCommentStore = create(
         set({
           productReviews: response.data.reviews || [],
           pagination: response.data.pagination,
-          stats: response.data.stats,
+          productStats: response.data.stats,
           isLoading: false,
           error: null,
         });
@@ -148,7 +149,7 @@ export const useCommentStore = create(
         }
 
         // Mettre à jour les stats après l'ajout d'un avis
-        const { stats: currentStats } = get();
+        const { productStats: currentStats } = get();
         const newReview = response.data.productReviews;
 
         // Recalculer les stats localement (approximation)
@@ -167,7 +168,7 @@ export const useCommentStore = create(
 
         set((state) => ({
           productReviews: [newReview, ...state.productReviews],
-          stats: newStats,
+          productStats: newStats,
           pagination: state.pagination
             ? {
                 ...state.pagination,
@@ -210,7 +211,7 @@ export const useCommentStore = create(
         // Mettre à jour les stats après la suppression
         const {
           productReviews,
-          stats: currentStats,
+          productStats: currentStats,
           pagination: currentPagination,
         } = get();
         const deletedReview = productReviews.find(
@@ -240,7 +241,7 @@ export const useCommentStore = create(
           productReviews: productReviews.filter(
             (review) => review._id !== reviewId
           ),
-          stats: newStats,
+          productStats: newStats,
           pagination: currentPagination
             ? {
                 ...currentPagination,

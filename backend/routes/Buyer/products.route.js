@@ -32,4 +32,6 @@ router.get(
   productsController.commentedProduct
 );
 
+router.get("/getLike/:id", productsController.getLike);
+
 module.exports = router;

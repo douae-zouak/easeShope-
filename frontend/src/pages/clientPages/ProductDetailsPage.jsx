@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { MoveLeft } from "lucide-react";
+import { Link } from "react-router-dom";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { Link } from "react-router-dom";
 
 import { useProductStore } from "../../store/product.store";
 import ShippingDetails from "../../components/ShippingDetails";
@@ -16,35 +16,35 @@ import AddProductReview from "../../components/AddProductReview";
 import { useCommentStore } from "../../store/comment.store";
 import { useUserStore } from "../../store/user.store";
 import { useAuthStore } from "../../store/auth.store";
+import ProductDetailsNav from "../../components/ProductDetailsNav";
+import ProductStats from "../../components/ProductStats";
+import ClientProductCard from "../../components/ClientProductCard";
+import Footer from "../../components/footer";
 
 const ProductDetailsPage = () => {
   const { id } = useParams();
 
   const [product, setProduct] = useState(null);
   const [seller, setSeller] = useState(null);
-
   const [selectedVariant, setSelectedVariant] = useState(null);
-  const [currentPage, setCurrentPage] = useState(1); // Ajout pour la pagination
-  const itemsPerPage = 5; // Définition du nombre d'items par page
-  // const [newReview, setNewReview] = useState({
-  //   rating: 5,
-  //   comment: "",
-  // });
+  const [currentPage, setCurrentPage] = useState(1);
 
-  const { getProductById, isLoading } = useProductStore();
+  const itemsPerPage = 5;
+
+  const { getProductById, isLoading, getLike, similarProducts } =
+    useProductStore();
   const { getProductReviews, productReviews } = useCommentStore();
   const { commentedProduct, commentProductId } = useUserStore();
   const { isAuthenticated } = useAuthStore();
 
   const navigate = useNavigate();
-
   const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
-    // Modifiez cet appel
     getProductReviews(id, currentPage, itemsPerPage);
     commentedProduct(id);
-  }, [refresh, id, currentPage]); // Ajoutez currentPage aux dépendances
+    getLike(id);
+  }, [refresh, id, currentPage]);
 
   useEffect(() => {
     const loadProductData = async () => {
@@ -52,7 +52,6 @@ const ProductDetailsPage = () => {
         const data = await getProductById(id);
         setProduct(data.product);
         setSeller(data.seller);
-        // Sélectionner la première variante par défaut
         if (data.variants && data.variants.length > 0) {
           setSelectedVariant(data.variants[0]);
         }
@@ -106,7 +105,10 @@ const ProductDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-100 ">
+    <div className="min-h-screen bg-gray-100">
+      {/* Navbar */}
+      <ProductDetailsNav />
+
       <div className="flex flex-row items-center gap-3 pt-5 ml-16">
         <Link to="/home">
           <MoveLeft
@@ -152,27 +154,53 @@ const ProductDetailsPage = () => {
           </div>
         </div>
 
-        <div className=" mt-10 flex ">
-          <CustumerProductReviews
-            productReviews={productReviews}
-            renderStars={renderStars}
-            commentId={commentProductId}
-          />
+        <div className="w-full flex mt-10 gap-12">
+          <div className="flex-1">
+            <ProductStats />
+          </div>
 
-          {/* Add Review Section */}
-          {isAuthenticated && commentProductId && (
-            <AddProductReview
-              onReviewAdded={() => {
-                // Rafraîchir les avis après ajout
-                setRefresh((prev) => !prev);
-                // Réinitialiser à la première page pour voir le nouvel avis
-                setCurrentPage(1);
-              }}
-              productId={id}
+          <div className="flex-1 flex flex-col">
+            <CustumerProductReviews
+              productReviews={productReviews}
+              renderStars={renderStars}
+              commentId={commentProductId}
             />
-          )}
+
+            {/* Add Review Section */}
+            {isAuthenticated && !commentProductId && (
+              <AddProductReview
+                onReviewAdded={() => {
+                  setRefresh((prev) => !prev);
+                  setCurrentPage(1);
+                }}
+                productId={id}
+              />
+            )}
+          </div>
+        </div>
+        <div className="mt-20">
+          <h1 className="text-gray-900 text-6xl font-medium font-title w-full text-center">
+            You might also like
+          </h1>
+
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8, staggerChildren: 0.1 }}
+            viewport={{ once: true, margin: "-50px" }}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 mt-15 mb-10"
+          >
+            {similarProducts.length > 0 &&
+              similarProducts?.map((product) => (
+                <ClientProductCard
+                  key={`gen-${product._id}`}
+                  product={product}
+                />
+              ))}
+          </motion.div>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

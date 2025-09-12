@@ -7,6 +7,7 @@ const ProductHeader = ({
   category,
   status,
 }) => {
+
   const CATEGORIES = [
     "All",
     "Mobile Phones",
@@ -45,7 +46,7 @@ const ProductHeader = ({
     "Footwear",
   ];
 
-  const STATUS = ["All", "draft", "pending", "active", "out_of_stock"];
+  const STATUS = ["All", "draft", "pending", "active", "out_of_stock", "rejected"];
 
   return (
     <>

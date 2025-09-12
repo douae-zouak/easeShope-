@@ -10,7 +10,7 @@ const ProductReviewSchema = new mongoose.Schema(
 
     productId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
+      ref: "product",
       required: true,
       index: true,
     },
@@ -54,18 +54,6 @@ const ProductReviewSchema = new mongoose.Schema(
 ProductReviewSchema.index({ userId: 1, orderId: 1 }, { unique: true });
 ProductReviewSchema.index({ createdAt: -1 });
 
-// Virtual pour calculer le temps depuis publication
-ProductReviewSchema.virtual("timeAgo").get(function () {
-  const now = new Date();
-  const diff = now - this.createdAt;
-  const days = Math.floor(diff / (1000 * 60 * 60 * 24));
-  if (days === 0) return "Today";
-  if (days === 1) return "Yesterday";
-  if (days < 7) return `It's been ${days} days`;
-  if (days < 30) return `It's been ${Math.floor(days / 7)} weeks`;
-  return `It's been ${Math.floor(days / 30)} months`;
-});
-
 // Méthode statique pour calculer note moyenne et distribution
 ProductReviewSchema.statics.getAverageRating = async function (productId) {
   const result = await this.aggregate([
@@ -103,7 +91,7 @@ async function updateProductStats(productId) {
   const stats = await ProductReview.getAverageRating(productId);
 
   // Mettre à jour le document Product
-  await mongoose.model("Product").findByIdAndUpdate(productId, {
+  await mongoose.model("product").findByIdAndUpdate(productId, {
     $set: {
       "productStats.averageRating": stats.averageRating,
       "productStats.totalReviews": stats.totalReviews,

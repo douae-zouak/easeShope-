@@ -169,3 +169,26 @@ exports.commentedProduct = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.getLike = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const product = await Product.findById(id);
+
+    if (!product) {
+      return res.json({ error: "No product found with that ID" });
+    }
+
+    const similarProducts = await Product.find({
+      _id: { $ne: id },
+      $or: [{ gender: product.gender }, { category: product.category }],
+    });
+
+    res.status(200).json({
+      similarProducts: similarProducts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

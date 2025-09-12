@@ -31,6 +31,25 @@ export const useProductStore = create(
       seller: null,
       pendingProducts: [],
       pendingPagination: null,
+      similarProducts: [],
+
+      getLike: async (id) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(`${API_CLIENT_URL}/getLike/${id}`);
+
+          set({
+            similarProducts: response.data.similarProducts,
+            isLoading: false,
+          });
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.error || "Error getting like products";
+
+          set({ error: errorMessage, isLoading: false });
+          throw new Error(errorMessage);
+        }
+      },
 
       checkout: async (total, items) => {
         try {

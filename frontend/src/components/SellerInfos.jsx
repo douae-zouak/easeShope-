@@ -1,10 +1,12 @@
 import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useCommentStore } from "../store/comment.store";
+import { useProductStore } from "../store/product.store";
 
 const SellerInfos = ({ seller }) => {
   const API_URL = import.meta.env.VITE_API_URL;
   const { getSellerReviews, stats } = useCommentStore();
+  const { getColor, getInitial } = useProductStore();
 
   useEffect(() => {
     getSellerReviews(seller._id);
@@ -25,17 +27,31 @@ const SellerInfos = ({ seller }) => {
     ));
   };
 
+  const photo = seller?.profilePhoto
+    ? `${API_URL}${seller.profilePhoto}`
+    : null;
+
   return (
     <div className="bg-white rounded-xl shadow-lg p-6 mt-6">
       <h1 className="text-gray-900 text-2xl font-medium font-title">Seller</h1>
       <div className="flex items-center">
         {`${API_URL}${seller.profilePhoto}` && (
           <Link to={`/seller/${seller._id}`}>
-            <img
-              src={`${API_URL}${seller.profilePhoto}`}
-              alt="Profile preview"
-              className="w-15 h-15 rounded-full"
-            />
+            {photo ? (
+              <img
+                src={photo}
+                alt="Profile"
+                className="w-10 h-10 rounded-full border hover:ring-2 hover:ring-indigo-500 transition cursor-pointer"
+              />
+            ) : (
+              <div
+                className={`w-10 h-10 rounded-full border flex items-center justify-center text-xl font-medium hover:ring-2 hover:ring-gray-300 ${getColor(
+                  seller?.fullName
+                )}`}
+              >
+                {getInitial(seller?.fullName)}
+              </div>
+            )}
           </Link>
         )}
         <div className="ml-3">
