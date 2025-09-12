@@ -31,8 +31,7 @@ const GENDER_CATEGORIES = {
         "Jackets & Coats",
         "Activewear",
       ],
-      image:
-        "https://images.unsplash.com/photo-1489987707025-afc232f7ea0f?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/women_fashion.jpg",
     },
     {
       name: "Shoes",
@@ -44,8 +43,7 @@ const GENDER_CATEGORIES = {
         "Flats",
         "Loafers",
       ],
-      image:
-        "https://images.unsplash.com/photo-1543163521-1bf539c55dd2?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/women_shoes.jpg",
     },
     {
       name: "Accessories",
@@ -58,14 +56,12 @@ const GENDER_CATEGORIES = {
         "Jewelry",
         "Scarves",
       ],
-      image:
-        "https://images.unsplash.com/photo-1591562574665-6a939a0b2f02?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/jewerlies.jpg",
     },
     {
       name: "Beauty",
       subcategories: ["Skincare", "Makeup", "Hair Care", "Fragrances"],
-      image:
-        "https://images.unsplash.com/photo-1596462502278-27bfdc403348?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/makeup.jpg",
     },
   ],
   men: [
@@ -81,8 +77,7 @@ const GENDER_CATEGORIES = {
         "Activewear",
         "Shorts",
       ],
-      image:
-        "https://images.unsplash.com/photo-1617137968427-85924c800a22?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/men.jpg",
     },
     {
       name: "Shoes",
@@ -108,8 +103,7 @@ const GENDER_CATEGORIES = {
         "Ties",
         "Bags",
       ],
-      image:
-        "https://images.unsplash.com/photo-1584917865442-de89df76afd3?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/men_acc.jpg",
     },
     {
       name: "Grooming",
@@ -122,8 +116,7 @@ const GENDER_CATEGORIES = {
     {
       name: "Girls",
       subcategories: ["Dresses", "Tops", "Bottoms", "Shoes", "Accessories"],
-      image:
-        "https://images.unsplash.com/photo-1519238263530-99bdd11df2ea?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/girls.jpg",
     },
     {
       name: "Boys",
@@ -134,14 +127,12 @@ const GENDER_CATEGORIES = {
     {
       name: "Baby",
       subcategories: ["Onesies", "Sleepwear", "Outerwear", "Accessories"],
-      image:
-        "https://images.unsplash.com/photo-1534452203293-494d7ddbf7e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/babies.jpg",
     },
     {
       name: "Toys",
       subcategories: ["Educational", "Outdoor", "Games", "Stuffed Animals"],
-      image:
-        "https://images.unsplash.com/photo-1587654780291-39c9404d746b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80",
+      image: "/toys.jpg",
     },
   ],
   electronics: [
