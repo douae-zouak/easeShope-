@@ -32,6 +32,7 @@ import {
 import { useFavoriteStore } from "../store/favorite.store";
 import { useCartStore } from "../store/cart.store";
 import { useCommentStore } from "../store/comment.store";
+import { useAuthStore } from "../store/auth.store";
 
 const ProductDetails = ({
   product,
@@ -42,6 +43,7 @@ const ProductDetails = ({
   const { favorites, toggleToFavorite } = useFavoriteStore();
   const { productStats } = useCommentStore();
   const { addToCart } = useCartStore();
+  const { user } = useAuthStore();
 
   const [quantity, setQuantity] = useState(1);
   const isLiked = favorites.some((fav) => fav.productId._id === id);
@@ -53,19 +55,25 @@ const ProductDetails = ({
       : product.originalPrice;
 
   const handleAddToCart = async () => {
-    if (!selectedVariant) {
-      toast.error("Please select a size and color");
-      return;
-    }
-    try {
-      await addToCart(product._id, quantity, selectedVariant, liked);
-      toast.success(`${product.name} added to your cart successfully`);
-    } catch (error) {
-      if (error.message?.includes("401")) {
-        toast.error("Please login to add products to cart");
-      } else {
-        toast.error(`Error adding product to cart: ${error.message || error}`);
+    if (user?.role === "buyer") {
+      if (!selectedVariant) {
+        toast.error("Please select a size and color");
+        return;
       }
+      try {
+        await addToCart(product._id, quantity, selectedVariant, liked);
+        toast.success(`${product.name} added to your cart successfully`);
+      } catch (error) {
+        if (error.message?.includes("401")) {
+          toast.error("Please login to add products to cart");
+        } else {
+          toast.error(
+            `Error adding product to cart: ${error.message || error}`
+          );
+        }
+      }
+    } else {
+      toast.error("Please login to add products to cart");
     }
   };
 
@@ -79,23 +87,27 @@ const ProductDetails = ({
   }, {});
 
   const handleProductLike = async () => {
-    try {
-      const res = await toggleToFavorite(product._id);
+    if (user?.role === "buyer") {
+      try {
+        const res = await toggleToFavorite(product._id);
 
-      if (res.error) {
-        return toast.error("res.error");
-      }
+        if (res.error) {
+          return toast.error("res.error");
+        }
 
-      toast.success(res.message);
-      setLiked(!liked);
-    } catch (error) {
-      if (error.message?.includes("No")) {
-        toast.error("Please login to add products to wishlist");
-      } else {
-        toast.error(
-          `Error adding product to wishlist: ${error.message || error}`
-        );
+        toast.success(res.message);
+        setLiked(!liked);
+      } catch (error) {
+        if (error.message?.includes("No")) {
+          toast.error("Please login to add products to wishlist");
+        } else {
+          toast.error(
+            `Error adding product to wishlist: ${error.message || error}`
+          );
+        }
       }
+    } else {
+      toast.error("Please login to add products to wishlist");
     }
   };
 

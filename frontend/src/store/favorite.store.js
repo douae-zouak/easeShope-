@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 
 const API_FAVORITE_URL = "http://localhost:3000/favorite";
@@ -80,6 +80,7 @@ export const useFavoriteStore = create(
     }),
     {
       name: "favorites",
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

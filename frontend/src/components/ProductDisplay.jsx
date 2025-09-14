@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useProductStore } from "../store/product.store";
 import { Info } from "lucide-react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import ClientProductCard from "./ClientProductCard";

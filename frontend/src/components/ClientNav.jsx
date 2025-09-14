@@ -15,11 +15,12 @@ const ClientNav = () => {
 
   const { getColor, getInitial } = useProductStore();
   const { favorites, getFavorites } = useFavoriteStore();
-  const { cart } = useCartStore();
+  const { cart, getCart } = useCartStore();
   const { user, logout } = useAuthStore();
 
   useEffect(() => {
     getFavorites();
+    getCart();
   }, []);
 
   const navigate = useNavigate();

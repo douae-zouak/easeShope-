@@ -213,10 +213,10 @@ const ProductDetailsNav = () => {
           isScrolled ? "backdrop-blur-md bg-white/80" : ""
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-end items-center h-16">
+        <div>
+          <div className="flex justify-end items-center h-16 mr-10">
             {/* Search (desktop) */}
-            <div className="hidden md:flex items-center flex-1 max-w-sm mx-70">
+            {/* <div className="hidden md:flex items-center flex-1 max-w-sm mx-70">
               <div className="relative w-full">
                 <input
                   type="text"
@@ -228,7 +228,7 @@ const ProductDetailsNav = () => {
                   className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
                 />
               </div>
-            </div>
+            </div> */}
 
             {/* User actions */}
             <div>
@@ -355,10 +355,16 @@ const ProductDetailsNav = () => {
       </nav>
 
       <div
-        className={`fixed top-0 left-0 w-[495px] z-50 transition-all duration-300  flex items-center h-20 `}
+        className={`fixed top-0 left-0 w-[495px] z-50 transition-all  flex items-center h-20 ${
+          isMenuOpen ? "bg-gray-100 duration-[3s] " : ""
+        }`}
       >
         {/* --- Burger button (TON burger, au-dessus du sidebar) --- */}
-        <button onClick={toggleMenu} aria-label="Open menu" className="pl-10">
+        <button
+          onClick={toggleMenu}
+          aria-label="Open menu"
+          className="mx-10 w-14 h-14 cursor-pointer"
+        >
           {/* burger lines (avec before/after) */}
           <div
             className={`relative z-50 w-[50px] h-[5px] bg-black rounded-2xl transition-all duration-500 ease-in-out 
@@ -373,7 +379,7 @@ const ProductDetailsNav = () => {
         </button>
 
         {/* Logo */}
-        <Link to="/home" className="mx-20">
+        <Link to="/home" className="mx-10">
           <h1 className="text-3xl font-bold text-gray-800">X ZARA</h1>
         </Link>
       </div>
@@ -415,7 +421,7 @@ const ProductDetailsNav = () => {
                       <button
                         key={gender}
                         onClick={() => handleGenderSelect(gender)}
-                        className={`text-sm text-left font-medium py-2 px-1 rounded ${
+                        className={`text-sm text-left font-medium py-2 px-1 rounded  ${
                           activeGender === gender
                             ? "text-black"
                             : "text-gray-500"
@@ -473,11 +479,10 @@ const ProductDetailsNav = () => {
                                 {category.subcategories.map((sub) => (
                                   <Link
                                     key={sub}
-                                    to={`/category/${activeGender}/${category.name
-                                      .toLowerCase()
-                                      .replace(/\s+/g, "-")}/${sub
-                                      .toLowerCase()
-                                      .replace(/\s+/g, "-")}`}
+                                    to={`/category/${
+                                      activeGender.charAt(0).toUpperCase() +
+                                      activeGender.slice(1).toLowerCase()
+                                    }/${sub.replace(/\s+/g, "-")}`}
                                     className="text-sm text-gray-600 hover:text-black py-1"
                                     onClick={toggleMenu}
                                   >

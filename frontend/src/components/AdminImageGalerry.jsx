@@ -10,7 +10,7 @@ const AdminImageGalerry = ({
   const getImagesForSelectedColor = () => {
     if (!product || !selectedColor) return [];
 
-    const colorVariant = product.imagesVariant.find(
+    const colorVariant = product?.imagesVariant.find(
       (variant) => variant.color === selectedColor
     );
 
@@ -31,7 +31,7 @@ const AdminImageGalerry = ({
         {colorImages.length > 0 ? (
           <img
             src={colorImages[activeImage]?.src}
-            alt={`${product.name} - ${selectedColor}`}
+            alt={`${product?.name} - ${selectedColor}`}
             className="w-full h-full object-contain transition-transform duration-300 group-hover:scale-105"
           />
         ) : (

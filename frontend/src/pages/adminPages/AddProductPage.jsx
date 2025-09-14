@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-import { Archive, Check, Save } from "lucide-react";
+import { Archive, ArrowLeft, Check, Link, MoveLeft, Save } from "lucide-react";
 import ProductInfo from "../../components/ProductInfo";
 import Pricing_Stock from "../../components/Pricing_Stock";
 import { useState } from "react";
@@ -7,12 +7,16 @@ import { useProductStore } from "../../store/product.store";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import ProductCategory from "../../components/ProductCategory";
+import SizeChart from "../../components/SizeChart";
 
 const AddProductPage = () => {
   const [productName, setProductName] = useState("");
   const [productDescription, setProductDescription] = useState("");
   const [productGender, setProductGender] = useState("Unisex");
-  const [category, setCategory] = useState("");
+  const [category, setCategory] = useState({
+    main: "",
+    sub: "",
+  });
   const [originalPrice, setOriginalPrice] = useState("");
   const [discount, setDiscount] = useState("");
   const [discountType, setDiscountType] = useState("");
@@ -23,18 +27,37 @@ const AddProductPage = () => {
 
   const navigate = useNavigate();
 
+  const colors = [
+    ...new Map(
+      variants.map((v) => [v.colorTitle, v]) // clé = colorTitle → garde le premier trouvé
+    ).values(),
+  ];
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !productName ||
-      !productDescription ||
-      !category ||
-      !originalPrice ||
-      imgVariants.length === 0
-    ) {
-      toast.error("Please fill all required fields");
-      return;
+    if (!productName) {
+      return toast.error("Product name is required");
+    }
+
+    if (!productDescription) {
+      return toast.error("Product description is required");
+    }
+
+    if (!category) {
+      return toast.error("Product category is required");
+    }
+
+    if (!originalPrice) {
+      return toast.error("Product price is required");
+    }
+
+    if (imgVariants.length === 0) {
+      return toast.error("Product images are required");
+    }
+
+    if (imgVariants.length !== colors.length) {
+      return toast.error("Please upload an image for each color variant.");
     }
 
     try {
@@ -60,15 +83,28 @@ const AddProductPage = () => {
   const handleDraft = async (e) => {
     e.preventDefault();
 
-    if (
-      !productName ||
-      !productDescription ||
-      !category ||
-      !originalPrice ||
-      imgVariants.length === 0
-    ) {
-      toast.error("Please fill all required fields");
-      return;
+    if (!productName) {
+      return toast.error("Product name is required");
+    }
+
+    if (!productDescription) {
+      return toast.error("Product description is required");
+    }
+
+    if (!category) {
+      return toast.error("Product category is required");
+    }
+
+    if (!originalPrice) {
+      return toast.error("Product price is required");
+    }
+
+    if (imgVariants.length === 0) {
+      return toast.error("Product images are required");
+    }
+
+    if (imgVariants.length !== colors.length) {
+      return toast.error("Please upload an image for each color variant.");
     }
 
     try {
@@ -94,6 +130,13 @@ const AddProductPage = () => {
 
   return (
     <>
+      <button
+        onClick={() => navigate("/vendor/products")}
+        className="flex items-center gap-2 px-4 py-2 bg-transparent border border-gray-300 rounded text-black hover:bg-gray-50 transition-all hover:-translate-x-1"
+      >
+        <ArrowLeft size={20} />
+        Back to Products
+      </button>
       <div className="flex items-center justify-between mb-6 mt-6">
         <h1 className="text-xl font-medium flex items-center gap-2 ml-4">
           <Archive size={20} />
@@ -101,6 +144,7 @@ const AddProductPage = () => {
         </h1>
 
         <div className="flex items-center gap-3">
+          <SizeChart />
           <button
             type="button"
             className="w-30 flex items-center gap-1 px-3 py-2 text-sm text-gray-600 hover:bg-gray-300 hover:text-black border rounded-lg cursor-pointer transition-colors duration-200"

@@ -34,8 +34,13 @@ const ProductDetailsPage = () => {
   const { getProductById, isLoading, getLike, similarProducts } =
     useProductStore();
   const { getProductReviews, productReviews } = useCommentStore();
-  const { commentedProduct, commentProductId } = useUserStore();
-  const { isAuthenticated } = useAuthStore();
+  const {
+    commentedProduct,
+    commentProductId,
+    orderedProduct,
+    orderedProductId,
+  } = useUserStore();
+  const { user } = useAuthStore();
 
   const navigate = useNavigate();
   const [refresh, setRefresh] = useState(false);
@@ -43,6 +48,7 @@ const ProductDetailsPage = () => {
   useEffect(() => {
     getProductReviews(id, currentPage, itemsPerPage);
     commentedProduct(id);
+    orderedProduct(id);
     getLike(id);
   }, [refresh, id, currentPage]);
 
@@ -167,15 +173,17 @@ const ProductDetailsPage = () => {
             />
 
             {/* Add Review Section */}
-            {isAuthenticated && !commentProductId && (
-              <AddProductReview
-                onReviewAdded={() => {
-                  setRefresh((prev) => !prev);
-                  setCurrentPage(1);
-                }}
-                productId={id}
-              />
-            )}
+            {!commentProductId &&
+              user?.role === "buyer" &&
+              orderedProductId && (
+                <AddProductReview
+                  onReviewAdded={() => {
+                    setRefresh((prev) => !prev);
+                    setCurrentPage(1);
+                  }}
+                  productId={id}
+                />
+              )}
           </div>
         </div>
         <div className="mt-20">

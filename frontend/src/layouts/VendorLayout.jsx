@@ -10,11 +10,7 @@ const VendorLayout = ({ children }) => {
         </div>
 
         <div className="flex-1 flex flex-col pl-20">
-          <header className="fixed top-0 left-20 right-0 h-16 z-10">
-            <Navbar />
-          </header>
-
-          <main className="flex-1 pl-10 pt-18 pr-10 overflow-auto">
+          <main className="flex-1 pl-10 pt-7 pr-10 overflow-auto">
             {children}
           </main>
         </div>

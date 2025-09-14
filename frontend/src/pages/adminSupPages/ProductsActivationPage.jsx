@@ -12,7 +12,6 @@ import {
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
-import Navbar from "../../components/Navbar";
 import AdminNavbar from "../../components/AdminNavbar";
 
 const ProductsActivationPage = () => {
@@ -161,7 +160,7 @@ const ProductsActivationPage = () => {
 
   return (
     <div className="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-8 font-sans text-gray-900 bg-white min-h-screen">
-      <header className="fixed top-0 right-0 z-10">
+      <header className="fixed top-0 right-0 z-10 bg-white w-full">
         <AdminNavbar />
       </header>
       <div className="animate-fadeIn">
@@ -359,15 +358,20 @@ const ProductsActivationPage = () => {
                       <td className="p-4 border-b border-gray-200">
                         <div className="flex flex-col">
                           <span className="font-medium text-gray-900">
-                            {product.price} DH
-                          </span>
-                          <span className="font-medium text-gray-400 line-through">
                             {product.originalPrice} DH
                           </span>
                           {product.discount > 0 && (
-                            <span className="text-xs text-red-500 font-medium">
-                              -{product.discount}%
-                            </span>
+                            <>
+                              <span className="font-medium text-gray-900">
+                                {product.price} DH
+                              </span>
+                              <span className="font-medium text-gray-400 line-through">
+                                {product.originalPrice} DH
+                              </span>
+                              <span className="text-xs text-red-500 font-medium">
+                                -{product.discount}%
+                              </span>
+                            </>
                           )}
                         </div>
                       </td>
@@ -378,7 +382,7 @@ const ProductsActivationPage = () => {
                         <div className="flex gap-2">
                           <Link
                             to={`/admin/product-details/${product._id}`}
-                            className="w-9 h-9 flex items-center justify-center border border-gray-200 hover:border-gray-900 transition-colors"
+                            className="w-9 h-9 flex items-center justify-center border border-gray-200 hover:border-blue-600 hover:text-blue-600  transition-colors"
                             title="View details"
                           >
                             <Eye className="h-4 w-4" />

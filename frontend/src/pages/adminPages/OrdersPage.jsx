@@ -2,18 +2,20 @@ import { useState, useEffect } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 import { useOrderStore } from "../../store/order.store";
+import VendorNav from "../../components/VendorNav";
 
 const OrderTable = () => {
   const { sellerOrders, getSellerOrders, isLoading, updateOrderItemStatus } =
     useOrderStore();
   const [statusFilter, setStatusFilter] = useState("all");
   const [expandedOrder, setExpandedOrder] = useState(null);
+  const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
     getSellerOrders();
   }, []);
 
-  // Function to change item status (uncomment when you implement it)
+  // Function to change item status
   const handleStatusChange = async (orderId, itemId, newStatus) => {
     try {
       await updateOrderItemStatus(orderId, itemId, newStatus);
@@ -49,13 +51,31 @@ const OrderTable = () => {
     { value: "delivered", label: "Delivered" },
   ];
 
-  // Filter orders by status
-  const filteredOrders =
-    statusFilter === "all"
-      ? sellerOrders
-      : sellerOrders.filter((order) =>
-          order.items.some((item) => item.itemStatus === statusFilter)
-        );
+  // Filter orders by status and search query
+  const filteredOrders = sellerOrders.filter((order) => {
+    // Status filter
+    const statusMatch =
+      statusFilter === "all" ||
+      order.items.some((item) => item.itemStatus === statusFilter);
+
+    // Search filter
+    const searchMatch =
+      searchQuery === "" ||
+      // Check order number
+      order.orderNumber?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      // Check shipping address name
+      order.shippingAddress?.name
+        ?.toLowerCase()
+        .includes(searchQuery.toLowerCase()) ||
+      // Check items for product name or SKU
+      order.items.some(
+        (item) =>
+          item.productName?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          item.sku?.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+
+    return statusMatch && searchMatch;
+  });
 
   if (isLoading) {
     return (
@@ -66,39 +86,77 @@ const OrderTable = () => {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-4 py-17">
+      <header className="fixed top-0 left-0 right-0 h-16 z-10">
+        <VendorNav />
+      </header>
       <div className="flex flex-col md:flex-row md:items-center justify-between mb-6">
         <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4 md:mb-0">
           My Orders
         </h1>
 
-        {/* Status filter */}
-        <div className="flex items-center space-x-2">
-          <span className="text-gray-700">Filter by status:</span>
-          <select
-            value={statusFilter}
-            onChange={(e) => setStatusFilter(e.target.value)}
-            className="rounded-lg border border-gray-300 py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All statuses</option>
-            {statusOptions.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
-          </select>
+        <div className="flex flex-col md:flex-row gap-10">
+          {/* Search input */}
+          <div className="relative ">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <svg
+                className="h-5 w-5 text-gray-400"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            </div>
+            <input
+              type="text"
+              placeholder="Search orders"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="rounded-lg border border-gray-300 py-2 pl-10 pr-4 focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+            />
+          </div>
+
+          {/* Status filter */}
+          <div className="flex items-center space-x-2">
+            <span className="text-gray-700">Filter by status:</span>
+            <select
+              value={statusFilter}
+              onChange={(e) => setStatusFilter(e.target.value)}
+              className="rounded-lg border border-gray-300 py-2 px-3 focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+            >
+              <option value="all">All statuses</option>
+              {statusOptions.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
+                </option>
+              ))}
+            </select>
+          </div>
         </div>
       </div>
 
       {filteredOrders.length === 0 ? (
         <div className="bg-white rounded-xl shadow p-8 text-center">
           <p className="text-gray-500 text-lg">
-            {statusFilter === "all"
-              ? "You don't have any orders yet"
-              : `No orders with status "${
-                  statusOptions.find((o) => o.value === statusFilter)?.label
-                }"`}
+            {searchQuery || statusFilter !== "all"
+              ? "No orders match your search criteria"
+              : "You don't have any orders yet"}
           </p>
+          {(searchQuery || statusFilter !== "all") && (
+            <button
+              onClick={() => {
+                setSearchQuery("");
+                setStatusFilter("all");
+              }}
+              className="mt-4 text-indigo-600 hover:text-indigo-800 font-medium"
+            >
+              Clear filters
+            </button>
+          )}
         </div>
       ) : (
         <div className="space-y-4">

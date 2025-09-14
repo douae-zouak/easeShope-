@@ -1,6 +1,6 @@
 import { Info } from "lucide-react";
 import { useProductStore } from "../../store/product.store";
-import ClientNavbar from "../../components/ClientNavbar";
+import ProductDetailsNav from "../../components/ProductDetailsNav";
 import ClientProductCard from "../../components/ClientProductCard";
 import { useEffect, useMemo } from "react";
 import { useParams } from "react-router-dom";
@@ -76,7 +76,7 @@ const ProductsByCategory = () => {
 
   return (
     <>
-      <ClientNavbar />
+      <ProductDetailsNav />
       <div className="container mx-auto px-4 py-8">
         {/* Titre */}
         <div className="flex flex-col md:flex-row justify-between items-center pb-10 mt-7">

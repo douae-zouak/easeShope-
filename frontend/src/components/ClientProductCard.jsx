@@ -5,9 +5,11 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Heart } from "lucide-react";
 import toast from "react-hot-toast";
 import { useFavoriteStore } from "../store/favorite.store";
+import { useAuthStore } from "../store/auth.store";
 
 const ClientProductCard = ({ product }) => {
   const { toggleToFavorite, favorites } = useFavoriteStore();
+  const { user } = useAuthStore();
   const isLiked = favorites.some((fav) => fav.productId._id === product._id);
   const [liked, setLiked] = useState(isLiked);
   const [isHovered, setIsHovered] = useState(false);
@@ -31,18 +33,22 @@ const ClientProductCard = ({ product }) => {
 
   const handleProductLike = async (e) => {
     e.stopPropagation();
-    try {
-      const res = await toggleToFavorite(product._id);
-      if (res.error) return toast.error(res.error);
+    if (user?.role === "buyer") {
+      try {
+        const res = await toggleToFavorite(product._id);
+        if (res.error) return toast.error(res.error);
 
-      setLiked(!liked);
-      toast.success(res.message);
-    } catch (error) {
-      if (error.message?.includes("No refresh token")) {
-        toast.error("Please login to add products to wishlist");
-      } else {
-        toast.error(`Error: ${error.message || error}`);
+        setLiked(!liked);
+        toast.success(res.message);
+      } catch (error) {
+        if (error.message?.includes("No refresh token")) {
+          toast.error("Please login to add products to wishlist");
+        } else {
+          toast.error(`Error: ${error.message || error}`);
+        }
       }
+    } else {
+      toast.error("Please login to add products to wishlist");
     }
   };
 

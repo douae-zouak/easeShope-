@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 
 const API_CART_URL = "http://localhost:3000/cart";
@@ -132,6 +132,7 @@ export const useCartStore = create(
     }),
     {
       name: "cart",
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

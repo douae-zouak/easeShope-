@@ -1,22 +1,15 @@
 import { Link, useNavigate } from "react-router-dom";
-import { Bell, Search, User, LogOut } from "lucide-react";
+import { Bell, User, LogOut } from "lucide-react";
 import { useAuthStore } from "../store/auth.store";
 import { useProductStore } from "../store/product.store";
 import { useState } from "react";
 
-const Navbar = ({ onSearch }) => {
+const VendorNav = () => {
   const { user, logout } = useAuthStore();
   const { getColor, getInitial } = useProductStore();
   const [open, setOpen] = useState(false);
-  const [inputValue, setInputValue] = useState("");
 
   const navigate = useNavigate();
-
-  const handleChange = (e) => {
-    const value = e.target.value;
-    setInputValue(value);
-    onSearch(value); // envoie la recherche au parent
-  };
 
   const handleLogout = async () => {
     await logout();
@@ -27,22 +20,8 @@ const Navbar = ({ onSearch }) => {
   const photo = user?.profilePhoto ? `${API_URL}${user.profilePhoto}` : null;
 
   return (
-    <nav className="w-full pl-40 px-6 py-3 flex items-center justify-between bg-white">
-      {/* Search bar */}
-      <div className="flex items-center w-1/3">
-        <div className="relative w-full">
-          <input
-            type="text"
-            placeholder="Search..."
-            value={inputValue}
-            onChange={handleChange}
-            className="w-full pl-10 pr-4 py-2 border rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-300"
-          />
-          <Search className="absolute left-3 top-2.5 text-gray-500 w-5 h-5" />
-        </div>
-      </div>
-
-      <div className="flex items-center space-x-6">
+    <nav className="w-full pl-40 px-6 py-3 flex items-center justify-end bg-white">
+      <div className="flex items-center  space-x-6">
         {/* Notifications */}
         <button className="relative p-2 rounded-full hover:bg-gray-100 transition">
           <Bell className="w-6 h-6 text-gray-700" />
@@ -96,4 +75,4 @@ const Navbar = ({ onSearch }) => {
   );
 };
 
-export default Navbar;
+export default VendorNav;

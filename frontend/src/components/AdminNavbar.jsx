@@ -21,7 +21,7 @@ const AdminNavbar = () => {
   const photo = user?.profilePhoto ? `${API_URL}${user.profilePhoto}` : null;
 
   return (
-    <nav className="w-full pl-40 px-6 py-3 flex items-center justify-between ">
+    <nav className="w-full pl-40 px-6 py-3 flex items-center justify-end ">
       <div className="flex items-center space-x-6">
         {/* Notifications */}
         <button className="relative p-2 rounded-full hover:bg-gray-100 transition">

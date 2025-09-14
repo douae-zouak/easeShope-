@@ -2,7 +2,7 @@
 import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { useRef, useState } from "react";
-import { Star, Upload, Send, X, ImagePlus } from "lucide-react"; // Ajout des imports manquants
+import { Star, Send, X, ImagePlus } from "lucide-react"; // Ajout des imports manquants
 import { useCommentStore } from "../store/comment.store";
 
 const AddReview = ({ productId, onReviewAdded }) => {

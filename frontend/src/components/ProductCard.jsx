@@ -14,9 +14,11 @@ import {
   Sparkles,
   Eye,
   ShoppingCart,
+  XCircle,
 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
-const ProductCard = ({ product, onEdit, onDelete, onView }) => {
+const ProductCard = ({ product, onEdit, onDelete }) => {
   const [isHovered, setIsHovered] = useState(false);
 
   // Récupère la dernière image du tableau
@@ -94,6 +96,8 @@ const ProductCard = ({ product, onEdit, onDelete, onView }) => {
   const discountedPrice =
     product.discount > 0 ? product.price * (1 - product.discount / 100) : null;
 
+  const navigate = useNavigate();
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -132,14 +136,16 @@ const ProductCard = ({ product, onEdit, onDelete, onView }) => {
           transition={{ duration: 0.3 }}
         >
           <motion.button
-            onClick={() => onView(product._id)}
             className="p-3 bg-white rounded-full shadow-lg opacity-0"
             whileHover={{ scale: 1.1, backgroundColor: "#f8fafc" }}
             animate={{ opacity: isHovered ? 1 : 0, y: isHovered ? 0 : 10 }}
             transition={{ delay: 0.1, duration: 0.2 }}
             aria-label="View product"
           >
-            <Eye className="w-4 h-4 text-gray-700" />
+            <Eye
+              className="w-4 h-4 text-gray-700"
+              onClick={() => navigate(`/vendor/product/${product._id}`)}
+            />
           </motion.button>
 
           <motion.button
@@ -166,7 +172,7 @@ const ProductCard = ({ product, onEdit, onDelete, onView }) => {
       {/* Badge de discount moderne */}
       {product.discount > 0 && (
         <motion.div
-          className={`absolute top-4 left-4 z-10 ${
+          className={`absolute top-4 left-4 z-2 ${
             discountStyle.pulse ? "animate-pulse" : ""
           }`}
           initial={{ scale: 0.8, rotate: -5 }}
@@ -208,8 +214,8 @@ const ProductCard = ({ product, onEdit, onDelete, onView }) => {
           </div>
         </div>
 
-        <p className="text-sm text-gray-500 mb-4 font-normal tracking-wide uppercase text-xs letter-spacing-wide">
-          {product.category}
+        <p className="text-sm text-gray-500 mb-4 font-normal tracking-wide uppercase  letter-spacing-wide">
+          {product.category.main}
         </p>
 
         {/* Stock et actions */}

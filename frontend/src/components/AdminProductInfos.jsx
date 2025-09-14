@@ -14,12 +14,12 @@ const AdminProductInfos = ({
 
   // Trouver le code couleur correspondant à la couleur sélectionnée
   const getColorCode = (colorName) => {
-    const variant = product.variants.find((v) => v.colorTitle === colorName);
+    const variant = product?.variants.find((v) => v.colorTitle === colorName);
     return variant ? variant.colorCode : "#CCCCCC"; // Couleur par défaut si non trouvée
   };
 
   // Filter variants by selected color
-  const variantsByColor = product.variants.filter(
+  const variantsByColor = product?.variants.filter(
     (v) => v.colorTitle === selectedColor
   );
 
@@ -28,30 +28,32 @@ const AdminProductInfos = ({
       {/* Basic Info */}
       <div className="space-y-4">
         <h2 className="text-2xl font-light uppercase tracking-wide">
-          {product.name}
+          {product?.name}
         </h2>
         <p className="text-gray-600 uppercase text-sm tracking-wide">
-          {product.category} • {product.gender}
+          {product?.category} • {product?.gender}
         </p>
-        <p className="text-gray-700 leading-relaxed">{product.description}</p>
+        <p className="text-gray-700 leading-relaxed">{product?.description}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-5 bg-gray-100 border-l-4 border-black">
           <div className="flex items-center gap-3 text-gray-600">
             <Box size={18} />
             <span>
               Total Stock:{" "}
-              <strong className="text-black">{product.stock} units</strong>
+              <strong className="text-black">{product?.stock} units</strong>
             </span>
           </div>
           <div className="flex items-center gap-3 text-gray-600">
             <CreditCard size={18} />
             <span>
               Price:{" "}
-              <strong className="text-black">{product.originalPrice} DH</strong>
+              <strong className="text-black">
+                {product?.originalPrice} DH
+              </strong>
             </span>
-            {product.discount > 0 && (
+            {product?.discount > 0 && (
               <span className="px-2 py-1 bg-red-500 text-white text-xs font-medium rounded">
-                {product.discount}% OFF
+                {product?.discount}% OFF
               </span>
             )}
           </div>
@@ -60,7 +62,7 @@ const AdminProductInfos = ({
             <span>
               SKU:{" "}
               <strong className="text-black">
-                {product.variants[0]?.sku?.split("-")[0]}
+                {product?.variants[0]?.sku?.split("-")[0]}
               </strong>
             </span>
           </div>
@@ -69,7 +71,7 @@ const AdminProductInfos = ({
             <span>
               Created:{" "}
               <strong className="text-black">
-                {new Date(product.createdAt).toLocaleDateString()}
+                {new Date(product?.createdAt).toLocaleDateString()}
               </strong>
             </span>
           </div>
@@ -82,7 +84,7 @@ const AdminProductInfos = ({
           Select Color
         </h3>
         <div className="flex flex-wrap gap-3">
-          {product.imagesVariant.map((variant) => (
+          {product?.imagesVariant.map((variant) => (
             <div
               key={variant.color}
               className={`flex flex-col items-center gap-2 p-3 border cursor-pointer transition-all min-w-20 ${
@@ -107,7 +109,7 @@ const AdminProductInfos = ({
       </div>
 
       {/* Size and Stock */}
-      {variantsByColor.length > 0 && (
+      {variantsByColor?.length > 0 && (
         <div className="space-y-4">
           <h3 className="text-lg font-medium uppercase tracking-wide">
             Available Sizes for {selectedColor}

@@ -1,5 +1,5 @@
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 import axios from "axios";
 
 const API_URL = "http://localhost:3000/product";
@@ -32,6 +32,28 @@ export const useProductStore = create(
       pendingProducts: [],
       pendingPagination: null,
       similarProducts: [],
+      specificProducts: [],
+      searchResults: [],
+
+      getSpecificProducts: async (gender, category) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(
+            `${API_CLIENT_URL}/specificProducts/${gender}/${category}`
+          );
+
+          set({
+            specificProducts: response.data.specificProducts,
+            isLoading: false,
+          });
+        } catch (error) {
+          const errorMessage =
+            error.response?.data?.error || "Error getting specific products";
+
+          set({ error: errorMessage, isLoading: false });
+          throw new Error(errorMessage);
+        }
+      },
 
       getLike: async (id) => {
         try {
@@ -610,6 +632,7 @@ export const useProductStore = create(
     }),
     {
       name: "product-storage",
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

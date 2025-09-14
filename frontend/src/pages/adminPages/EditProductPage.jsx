@@ -1,4 +1,4 @@
-import { Archive, Check, Save } from "lucide-react";
+import { Archive, ArrowLeft, Check, Save } from "lucide-react";
 import ProductInfo from "../../components/ProductInfo";
 import Pricing_Stock from "../../components/Pricing_Stock";
 import ProductCategory from "../../components/ProductCategory"; // Ajout de l'import manquant
@@ -21,7 +21,7 @@ const EditProductPage = () => {
   const [variants, setVariants] = useState([]);
   const [imgVariants, setImgVariants] = useState([]);
 
-  const { updateProduct, getProductById } = useProductStore();
+  const { updateProduct, getProductById, isLoading } = useProductStore();
 
   const [product, setProduct] = useState(null);
 
@@ -30,19 +30,18 @@ const EditProductPage = () => {
     const loadProductData = async () => {
       try {
         const data = await getProductById(id);
-        setProduct(data);
+        setProduct(data.product);
 
         // Pré-remplir les champs avec les données existantes
-        setProductName(data.name || "");
-        setProductDescription(data.description || "");
-        setProductGender(data.gender || "Unisex");
-        setCategory(data.category || "");
-        setOriginalPrice(data.originalPrice?.toString() || ""); // Utiliser originalPrice au lieu de price
-        setDiscount(data.discount?.toString() || "");
-        setDiscountType(data.discountType || "");
-        setVariants(data.variants || []);
-        setImgVariants(data.imagesVariant || []);
-
+        setProductName(data.product.name || "");
+        setProductDescription(data.product.description || "");
+        setProductGender(data.product.gender || "Unisex");
+        setCategory(data.product.category || "");
+        setOriginalPrice(data.product.originalPrice?.toString() || ""); // Utiliser originalPrice au lieu de price
+        setDiscount(data.product.discount?.toString() || "");
+        setDiscountType(data.product.discountType || "");
+        setVariants(data.product.variants || []);
+        setImgVariants(data.product.imagesVariant || []);
       } catch (error) {
         toast.error(`Error while loading product data: ${error.message}`);
         navigate("/vendor/products");
@@ -54,6 +53,12 @@ const EditProductPage = () => {
     }
   }, [id, getProductById, navigate]);
 
+  const colors = [
+    ...new Map(
+      variants.map((v) => [v.colorTitle, v]) // clé = colorTitle → garde le premier trouvé
+    ).values(),
+  ];
+
   // Fonction pour convertir une valeur en nombre, retourne 0 si vide ou invalide
   const parseNumber = (value) => {
     if (value === "" || value === null || value === undefined) return 0;
@@ -64,15 +69,28 @@ const EditProductPage = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (
-      !productName ||
-      !productDescription ||
-      !category ||
-      !originalPrice ||
-      imgVariants.length === 0
-    ) {
-      toast.error("Please fill all required fields");
-      return;
+    if (!productName) {
+      return toast.error("Product name is required");
+    }
+
+    if (!productDescription) {
+      return toast.error("Product description is required");
+    }
+
+    if (!category) {
+      return toast.error("Product category is required");
+    }
+
+    if (!originalPrice) {
+      return toast.error("Product price is required");
+    }
+
+    if (imgVariants.length === 0) {
+      return toast.error("Product images are required");
+    }
+
+    if (imgVariants.length !== colors.length) {
+      return toast.error("Please upload an image for each color variant.");
     }
 
     try {
@@ -99,15 +117,28 @@ const EditProductPage = () => {
   const handleSaveProduct = async (e) => {
     e.preventDefault();
 
-    if (
-      !productName ||
-      !productDescription ||
-      !category ||
-      !originalPrice ||
-      imgVariants.length === 0
-    ) {
-      toast.error("Please fill all required fields");
-      return;
+    if (!productName) {
+      return toast.error("Product name is required");
+    }
+
+    if (!productDescription) {
+      return toast.error("Product description is required");
+    }
+
+    if (!category) {
+      return toast.error("Product category is required");
+    }
+
+    if (!originalPrice) {
+      return toast.error("Product price is required");
+    }
+
+    if (imgVariants.length === 0) {
+      return toast.error("Product images are required");
+    }
+
+    if (imgVariants.length !== colors.length) {
+      return toast.error("Please upload an image for each color variant.");
     }
 
     try {
@@ -131,8 +162,23 @@ const EditProductPage = () => {
     }
   };
 
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+      </div>
+    );
+  }
+
   return (
     <>
+      <button
+        onClick={() => navigate("/vendor/products")}
+        className="flex items-center gap-2 px-4 py-2 bg-transparent border border-gray-300 rounded text-black hover:bg-gray-50 transition-all hover:-translate-x-1"
+      >
+        <ArrowLeft size={20} />
+        Back to Products
+      </button>
       <div className="flex items-center justify-between mb-6 mt-6">
         <h1 className="text-xl font-medium flex items-center gap-2 ml-4">
           <Archive size={20} />

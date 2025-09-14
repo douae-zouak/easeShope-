@@ -1,13 +1,13 @@
 import Hero from "../../components/Hero";
 import Categories from "../../components/Categories";
 import ProductDisplay from "../../components/ProductDisplay";
-import ClientNav from "../../components/ClientNav";
 import Footer from "../../components/footer";
+import ProductDetailsNav from "../../components/ProductDetailsNav";
 
 const HomePage = () => {
   return (
     <div>
-      <ClientNav />
+      <ProductDetailsNav />
       <Hero />
       <Categories />
       <ProductDisplay />

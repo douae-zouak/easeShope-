@@ -9,7 +9,6 @@ import { useCartStore } from "../../store/cart.store";
 
 export default function CartPage() {
   const {
-    getCart,
     cart,
     updateQuantity,
     deleteProductFromCart,
@@ -17,9 +16,6 @@ export default function CartPage() {
     isLoading,
   } = useCartStore();
 
-  useEffect(() => {
-    getCart();
-  }, []);
 
   if (!cart || cart.length === 0) {
     return (

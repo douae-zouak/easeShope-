@@ -4,6 +4,7 @@ import { Check } from "lucide-react";
 import { useProductStore } from "../../store/product.store";
 import toast from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
+import VendorNav from "../../components/VendorNav";
 
 const ProfilePage = () => {
   const navigate = useNavigate();
@@ -91,7 +92,10 @@ const ProfilePage = () => {
   };
 
   return (
-    <div className="m-auto mt-12 w-xl p-10 bg-gray-100 rounded-lg shadow-2xl">
+    <div className="m-auto mt-19 w-xl p-10  bg-gray-100 rounded-lg shadow-2xl ">
+      <header className="fixed top-0 left-0 right-0 h-16 z-10">
+        <VendorNav />
+      </header>
       <h2 className="text-xl font-semibold mb-4 text-gray-800 text-center">
         Update Profil
       </h2>

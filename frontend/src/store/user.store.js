@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import axios from "axios";
-import { persist } from "zustand/middleware";
+import { createJSONStorage, persist } from "zustand/middleware";
 
 const API_URL = "http://localhost:3000";
 
@@ -15,7 +15,8 @@ export const useUserStore = create(
       sellerActiveProducts: [],
       sellerExperience: "1 day",
       commentId: null,
-      commentProductId : null,
+      commentProductId: null,
+      orderedProductId: null,
 
       getSellerById: async (userId) => {
         try {
@@ -112,6 +113,32 @@ export const useUserStore = create(
         }
       },
 
+      orderedProduct: async (productId) => {
+        try {
+          set({ isLoading: true });
+          const response = await axios.get(
+            `${API_URL}/didOrderedProduct/${productId}`
+          );
+
+          if (!response.data.error) {
+            set({
+              orderedProductId: response.data.orderedProductId,
+              isLoading: false,
+            });
+          }
+        } catch (error) {
+          let errorMessage = "An error occurred while checking is ordered";
+
+          if (axios.isAxiosError(error)) {
+            errorMessage = error.response?.data?.error || error.message;
+          }
+
+          console.log("error : ", error);
+          set({ error: errorMessage, isLoading: false });
+          throw Error(errorMessage);
+        }
+      },
+
       commentedProduct: async (productId) => {
         try {
           set({ isLoading: true });
@@ -140,6 +167,7 @@ export const useUserStore = create(
     }),
     {
       name: "seller",
+      storage: createJSONStorage(() => sessionStorage),
     }
   )
 );

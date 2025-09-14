@@ -43,7 +43,11 @@ import { useEffect } from "react";
 import LikePage from "./pages/clientPages/LikePage";
 import Orders from "./pages/clientPages/Orders";
 import SellerInfoPage from "./pages/clientPages/SellerInfoPage";
+import AdminSellerInfoPage from "./pages/adminSupPages/SellerInfosPage";
 import AdminProductDetailsPage from "./pages/adminSupPages/AdminProductDetailsPage";
+import SpecificProducts from "./pages/clientPages/SpecificProducts";
+import ViewProductPage from "./pages/adminPages/ViewProductPage";
+import ReturnsPage from "./pages/adminPages/ReturnsPage";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -128,7 +132,9 @@ const VendorRoutes = () => (
         <Route path="products" element={<ProductsPage />} />
         <Route path="add-product" element={<AddProductPage />} />
         <Route path="edit-product/:id" element={<EditProductPage />} />
+        <Route path="product/:id" element={<ViewProductPage />} />
         <Route path="orders" element={<OrdersPage />} />
+        <Route path="returns" element={<ReturnsPage />} />
         <Route path="profile" element={<ProfilePage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
@@ -150,6 +156,7 @@ const AdminRoutes = () => (
           element={<AdminProductDetailsPage />}
         />
         <Route path="returns-requests" element={<ReturnsRequestsPage />} />
+        <Route path="sellersInfo/:sellerId" element={<AdminSellerInfoPage />} />
         <Route path="vendors" element={<VendorsPage />} />
         <Route path="profile" element={<ProfileAdmin />} />
         <Route path="*" element={<NotFoundPage />} />
@@ -172,6 +179,7 @@ const SuccessPageWithTransition = Transition(SuccessPage);
 const CancelPageWithTransition = Transition(CancelPage);
 const LikePageWithTransition = Transition(LikePage);
 const OrdersWithTransition = Transition(Orders);
+const SpecificProductsWithTransition = Transition(SpecificProducts);
 
 const BuyerRoutes = () => {
   const location = useLocation();
@@ -194,7 +202,11 @@ const BuyerRoutes = () => {
           path="discount-product"
           element={<DiscountProductWithTransition />}
         />
-        <Route path="*" element={<NotFoundWithTransition />} />
+        <Route
+          path="category/:gender/:category"
+          element={<SpecificProductsWithTransition />}
+        />
+        <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
   );

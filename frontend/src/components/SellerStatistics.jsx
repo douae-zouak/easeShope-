@@ -5,6 +5,16 @@ import { useUserStore } from "../store/user.store";
 const SellerStatistics = ({ stats }) => {
   const { sellerActiveProducts, sellerExperience } = useUserStore();
 
+  const starRatings = [
+    { label: "5 Star Ratings", value: stats?.fiveStars },
+    { label: "4 Star Ratings", value: stats?.fourStars },
+    { label: "3 Star Ratings", value: stats?.threeStars },
+    { label: "2 Star Ratings", value: stats?.twoStars },
+    { label: "1 Star Ratings", value: stats?.oneStar },
+  ];
+
+  const totalReviews = stats?.totalReviews || 0;
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -17,110 +27,31 @@ const SellerStatistics = ({ stats }) => {
       </h2>
 
       <div className="space-y-4">
-        <div>
-          <div className="flex justify-between mb-1">
-            <span className="text-sm font-medium text-gray-700">
-              5 Star Ratings
-            </span>
-            <span className="text-sm font-medium text-gray-700">
-              {Math.round((stats?.fiveStars * 100) / stats?.totalReviews)} %
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-yellow-400 h-2 rounded-full"
-              style={{
-                width: `${Math.round(
-                  (stats?.fiveStars * 100) / stats?.totalReviews
-                )}%`,
-              }}
-            ></div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <span className="text-sm font-medium text-gray-700">
-              4 Star Ratings
-            </span>
-            <span className="text-sm font-medium text-gray-700">
-              {Math.round((stats?.fourStars * 100) / stats?.totalReviews)} %
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-yellow-400 h-2 rounded-full"
-              style={{
-                width: `${Math.round(
-                  (stats?.fourStars * 100) / stats?.totalReviews
-                )}%`,
-              }}
-            ></div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <span className="text-sm font-medium text-gray-700">
-              3 Star Ratings
-            </span>
-            <span className="text-sm font-medium text-gray-700">
-              {Math.round((stats?.threeStars * 100) / stats?.totalReviews)} %
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-yellow-400 h-2 rounded-full"
-              style={{
-                width: `${Math.round(
-                  (stats?.threeStars * 100) / stats?.totalReviews
-                )}%`,
-              }}
-            ></div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <span className="text-sm font-medium text-gray-700">
-              2 Star Ratings
-            </span>
-            <span className="text-sm font-medium text-gray-700">
-              {Math.round((stats?.twoStars * 100) / stats?.totalReviews)} %
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-yellow-400 h-2 rounded-full"
-              style={{
-                width: `${Math.round(
-                  (stats?.twoStars * 100) / stats?.totalReviews
-                )}%`,
-              }}
-            ></div>
-          </div>
-        </div>
-
-        <div>
-          <div className="flex justify-between mb-1">
-            <span className="text-sm font-medium text-gray-700">
-              1 Star Ratings
-            </span>
-            <span className="text-sm font-medium text-gray-700">
-              {Math.round((stats?.oneStar * 100) / stats?.totalReviews)} %
-            </span>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-2">
-            <div
-              className="bg-yellow-400 h-2 rounded-full"
-              style={{
-                width: `${Math.round(
-                  (stats?.oneStar * 100) / stats?.totalReviews
-                )}%`,
-              }}
-            ></div>
-          </div>
-        </div>
+        {starRatings.map((star, index) => {
+          const percentage = totalReviews
+            ? Math.round((star.value * 100) / totalReviews)
+            : 0;
+          return (
+            <div key={index}>
+              <div className="flex justify-between mb-1">
+                <span className="text-sm font-medium text-gray-700">
+                  {star.label}
+                </span>
+                <span className="text-sm font-medium text-gray-700">
+                  {percentage} %
+                </span>
+              </div>
+              <div className="w-full bg-gray-200 rounded-full h-2">
+                <div
+                  className={`h-2 rounded-full ${
+                    percentage > 0 ? "bg-yellow-400" : "bg-gray-400"
+                  }`}
+                  style={{ width: `${percentage}%` }}
+                ></div>
+              </div>
+            </div>
+          );
+        })}
       </div>
 
       <div className="mt-8 grid grid-cols-2 gap-4">

@@ -9,10 +9,13 @@ import {
 import React from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
+import { useProductStore } from "../store/product.store";
 
 const SidebarAdmin = () => {
   const location = useLocation(); // Pour détecter la page active
   const navigate = useNavigate();
+
+  const { getPendingProducts, pendingProducts } = useProductStore();
 
   // Fonction pour vérifier si un lien est actif
   const isActive = (path) => location.pathname === path;
@@ -28,6 +31,14 @@ const SidebarAdmin = () => {
     if (lastPath && lastPath !== location.pathname) {
       navigate(lastPath);
     }
+  }, []);
+
+  useEffect(() => {
+    getPendingProducts(1, 10, {
+      category: "all",
+      gender: "all",
+      search: "",
+    });
   }, []);
 
   return (
@@ -57,6 +68,7 @@ const SidebarAdmin = () => {
                 isActive("/admin/products-activation") ||
                 location.pathname.startsWith("/admin/product-details/")
               }
+              alert={pendingProducts.length !== 0 ? true : false}
               link="/admin/products-activation"
             />
             <SidebarItem

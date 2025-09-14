@@ -1,4 +1,10 @@
-import { LayoutDashboard, Package, User, ShoppingBag } from "lucide-react";
+import {
+  LayoutDashboard,
+  Package,
+  User,
+  ShoppingBag,
+  Repeat,
+} from "lucide-react";
 import React from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
@@ -64,6 +70,14 @@ const Sidebar = () => {
               active={isActive("/vendor/orders")}
               alert={sellerOrders.length !== 0 ? true : false}
               link="/vendor/orders"
+            />
+
+            <SidebarItem
+              icon={<Repeat size={20} />}
+              text="Returns"
+              active={isActive("/vendor/returns")}
+              alert={sellerOrders.length !== 0 ? true : false}
+              link="/vendor/returns"
             />
 
             <SidebarItem

@@ -11,7 +11,7 @@ const ProductStats = () => {
     if (!productStats?.totalReviews || productStats?.totalReviews === 0) {
       return 0; // pas de reviews => pas de remplissage
     }
-    const value = Math.round((count * 100) / productStats.totalReviews);
+    const value = Math.round((count * 100) / productStats?.totalReviews);
     return isNaN(value) ? 0 : value; // sécurité anti-NaN
   };
 
@@ -29,11 +29,11 @@ const ProductStats = () => {
       <div className="flex gap-10">
         <div className="w-[30%] text-center">
           <h1 className="text-7xl font-semibold">
-            {productStats.averageRating.toFixed(1).replace(".", ",")}
+            {productStats?.averageRating.toFixed(1).replace(".", ",")}
           </h1>
           <span className="text-sm text-gray-500 mt-1">
-            ({productStats.totalReviews}{" "}
-            {productStats.totalReviews === 0 || productStats.totalReviews === 1
+            ({productStats?.totalReviews}{" "}
+            {productStats?.totalReviews === 0 || productStats?.totalReviews === 1
               ? "review"
               : "reviews"}
             )

@@ -37,7 +37,7 @@ const ProductCategory = ({
     "44",
     "45",
   ];
-  const years = [
+  const kidsYears = [
     "4Y",
     "5Y",
     "6Y",
@@ -51,28 +51,56 @@ const ProductCategory = ({
     "14Y",
   ];
 
+  const babyYears = ["0M", "1M", "2M", "3M", "6M", "1Y", "2Y"];
+
   const CATEGORIES = [
     {
       name: "Electronics",
       subcategories: [
-        "Mobile Phones",
         "Laptops",
         "Tablets",
         "Cameras",
         "Accessories",
+        "Smartphones",
+        "Chargers",
+        "Headphones",
+        "Speakers",
+        "Earbuds",
+        "Smartwatches",
+        "Fitness Trackers",
+        "VR Headsets",
       ],
     },
     {
       name: "Clothing",
       subcategories: [
-        "T-Shirts",
-        "Shirts",
+        "Tops & T-Shirts",
         "Jeans",
         "Dresses",
-        "Jackets",
-        "Sweaters",
-        "Shoes",
-        "Accessories",
+        "Blouses & Shirts",
+        "Pants",
+        "Jackets & Coats",
+        "Suits & Blazers",
+        "Shorts",
+      ],
+    },
+    {
+      name: "Shoes",
+      subcategories: ["Boots", "Sandals", "Heels", "Loafers", "Dress Shoes"],
+    },
+    {
+      name: "Accessories",
+      subcategories: [
+        "Bags & Purses",
+        "Wallets",
+        "Belts",
+        "Hats",
+        "Sunglasses",
+        "Jewelry",
+        "Scarves",
+        "Watches",
+        "Hats",
+        "Ties",
       ],
     },
     {
@@ -81,17 +109,11 @@ const ProductCategory = ({
     },
     {
       name: "Beauty",
-      subcategories: ["Skincare", "Makeup", "Hair Care", "Accessories"],
+      subcategories: ["Skincare", "Makeup", "Hair Care"],
     },
     {
       name: "Sports",
-      subcategories: [
-        "Fitness Equipment",
-        "Athletic Shoes",
-        "Apparel",
-        "Outdoor Gear",
-        "Sports Accessories",
-      ],
+      subcategories: ["Fitness Equipment", "Athletic Shoes", "Apparel"],
     },
     {
       name: "Books",
@@ -104,75 +126,74 @@ const ProductCategory = ({
       ],
     },
     {
-      name: "Kids",
-      subcategories: ["Clothing", "Toys", "School Supplies", "Footwear"],
+      name: "Girls",
+      subcategories: ["Dresses", "Tops", "Bottoms", "Shoes", "Accessories"],
+    },
+    {
+      name: "Boys",
+      subcategories: ["T-Shirts", "Shirts", "Pants", "Shoes", "Accessories"],
+    },
+    {
+      name: "Toys",
+      subcategories: ["Educational", "Outdoor", "Games", "Stuffed Animals"],
+    },
+    {
+      name: "Babies",
+      subcategories: ["Onesies", "Outerwear", "Accessories"],
     },
   ];
 
   const isClothingCategory =
-    category &&
+    category.sub &&
     [
-      "T-Shirts",
-      "Shirts",
       "Jeans",
       "Dresses",
-      "Jackets",
       "Sweaters",
       "Shoes",
       "Accessories",
       "Apparel",
       "Athletic Shoes",
       "Footwear",
-      "Clothing",
-    ].includes(category);
+      "Tops & T-Shirts",
+      "Blouses & Shirts",
+      "Pants",
+      "Jackets & Coats",
+      "Suits & Blazers",
+      "Shorts",
+      "T-Shirts",
+      "Shirts",
+      "Tops",
+      "Bottoms",
+      "Onesies",
+      "Outerwear",
+    ].includes(category.sub);
 
-  // Générer automatiquement le SKU
-  const generateSku = (size, colorTitle) => {
-    const productAbbr = productName
-      ? productName
-          .split(" ")
-          .map((word) => word.charAt(0))
-          .join("")
-          .toUpperCase()
-          .substring(0, 3)
-      : "PROD";
-    
-    const sizeAbbr = size ? size : "NS";
-    const colorAbbr = colorTitle
-      ? colorTitle
-          .split(" ")
-          .map((word) => word.charAt(0))
-          .join("")
-          .toUpperCase()
-          .substring(0, 2)
-      : "CL";
-    
-    return `${productAbbr}-${sizeAbbr}-${colorAbbr}-${Math.random()
-      .toString(36)
-      .substring(2, 6)
-      .toUpperCase()}`;
-  };
+  const isShoeCategory =
+    category.main === "Shoes" ||
+    (category.main === "Sports" && category.sub === "Athletic Shoes");
+  const isKidsCategory = ["Girls", "Boys"].includes(category.main);
+  const isBabyCategory = category.main === "Babies";
 
   const addVariant = () => {
     if (
-      newVariant.size &&
       selectedColor.title &&
       selectedColor.code &&
       parseInt(newVariant.stock) >= 0 &&
       !isNaN(parseInt(newVariant.stock))
     ) {
-      const sku = generateSku(newVariant.size, selectedColor.title);
-      
-      setVariants([
-        ...variants,
-        {
-          size: newVariant.size,
-          colorTitle: selectedColor.title,
-          colorCode: selectedColor.code,
-          stock: parseInt(newVariant.stock),
-          sku: sku,
-        },
-      ]);
+      const variant = {
+        colorTitle: selectedColor.title,
+        colorCode: selectedColor.code,
+        stock: parseInt(newVariant.stock),
+        sku: generateSKU(),
+      };
+
+      // Ajouter la taille seulement pour les catégories vestimentaires
+      if (isClothingCategory && newVariant.size) {
+        variant.size = newVariant.size;
+      }
+
+      setVariants([...variants, variant]);
 
       setNewVariant({
         ...newVariant,
@@ -182,31 +203,15 @@ const ProductCategory = ({
     }
   };
 
-  const addNonClothingVariant = () => {
-    if (
-      selectedColor.title &&
-      selectedColor.code &&
-      parseInt(newVariant.stock) >= 0 &&
-      !isNaN(parseInt(newVariant.stock))
-    ) {
-      const sku = generateSku("", selectedColor.title);
-      
-      setVariants([
-        ...variants,
-        {
-          size: "",
-          colorTitle: selectedColor.title,
-          colorCode: selectedColor.code,
-          stock: parseInt(newVariant.stock),
-          sku: sku,
-        },
-      ]);
-
-      setNewVariant({
-        ...newVariant,
-        stock: "",
-      });
-    }
+  const generateSKU = () => {
+    const prefix = productName
+      ? productName.substring(0, 3).toUpperCase()
+      : "PRO";
+    const colorCode = selectedColor.title
+      ? selectedColor.title.substring(0, 2).toUpperCase()
+      : "CL";
+    const randomNum = Math.floor(100 + Math.random() * 900);
+    return `${prefix}-${colorCode}-${randomNum}`;
   };
 
   const removeVariant = (index) => {
@@ -238,6 +243,12 @@ const ProductCategory = ({
     });
   }, [category, setVariants]);
 
+  // Obtenir les sous-catégories pour la catégorie principale sélectionnée
+  const getSubcategories = () => {
+    const mainCategory = CATEGORIES.find((cat) => cat.name === category.main);
+    return mainCategory ? mainCategory.subcategories : [];
+  };
+
   return (
     <div className="w-full mx-auto p-6 bg-gray-50 rounded-lg shadow-lg mb-10 min-h-screen flex flex-col justify-between">
       <div>
@@ -245,7 +256,57 @@ const ProductCategory = ({
           Product Variants
         </h2>
 
+        {/* Sélection de la catégorie principale */}
         <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Main Category
+            <span className="text-red-500 ml-1">*</span>
+          </label>
+          <select
+            className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+            value={category.main}
+            onChange={(e) => setCategory({ main: e.target.value, sub: "" })}
+            required
+          >
+            <option value="" disabled>
+              Select a main category
+            </option>
+            {CATEGORIES.map((cat) => (
+              <option key={cat.name} value={cat.name}>
+                {cat.name}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        {/* Sélection de la sous-catégorie */}
+        {category.main && (
+          <div className="mb-4">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Subcategory
+              <span className="text-red-500 ml-1">*</span>
+            </label>
+            <select
+              className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
+              value={category.sub}
+              onChange={(e) =>
+                setCategory({ ...category, sub: e.target.value })
+              }
+              required
+            >
+              <option value="" disabled>
+                Select a subcategory
+              </option>
+              {getSubcategories().map((sub) => (
+                <option key={sub} value={sub}>
+                  {sub}
+                </option>
+              ))}
+            </select>
+          </div>
+        )}
+
+        {/* <div className="mb-4">
           <label
             className="block text-sm font-medium text-gray-700 mb-2"
             htmlFor="product-category"
@@ -273,7 +334,7 @@ const ProductCategory = ({
               </optgroup>
             ))}
           </select>
-        </div>
+        </div> */}
 
         {/* Sélection de la couleur (pour toutes les catégories) */}
         <div className="flex justify-between mb-6 p-4 bg-indigo-50 rounded-lg">
@@ -286,7 +347,9 @@ const ProductCategory = ({
               placeholder="Color name"
               className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
               value={selectedColor.title}
-              onChange={(e) => setSelectedColor({ ...selectedColor, title: e.target.value })}
+              onChange={(e) =>
+                setSelectedColor({ ...selectedColor, title: e.target.value })
+              }
             />
           </div>
 
@@ -299,7 +362,9 @@ const ProductCategory = ({
                 type="color"
                 className="absolute opacity-0 w-0 h-0"
                 value={selectedColor.code}
-                onChange={(e) => setSelectedColor({ ...selectedColor, code: e.target.value })}
+                onChange={(e) =>
+                  setSelectedColor({ ...selectedColor, code: e.target.value })
+                }
                 id="color-picker"
               />
               <label
@@ -323,28 +388,36 @@ const ProductCategory = ({
           <div className="flex justify-between mb-6 p-4 bg-indigo-50 rounded-lg">
             <div className="flex-1 mr-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                {category === "Clothing" ? "Year" : "Size"}
+                {isBabyCategory ? "Age" : isKidsCategory ? "Year" : "Size"}
               </label>
               <select
                 className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
                 value={newVariant.size}
-                onChange={(e) => setNewVariant({ ...newVariant, size: e.target.value })}
+                onChange={(e) =>
+                  setNewVariant({ ...newVariant, size: e.target.value })
+                }
               >
                 <option value="">
-                  Select {category === "Clothing" ? "year" : "size"}
+                  Select{" "}
+                  {isBabyCategory ? "age" : isKidsCategory ? "year" : "size"}
                 </option>
-                {category === "Shoes" ||
-                category === "Athletic Shoes" ||
-                category === "Footwear"
+
+                {isShoeCategory
                   ? shoeSizes.map((size) => (
                       <option key={size} value={size}>
                         {size}
                       </option>
                     ))
-                  : category === "Clothing"
-                  ? years.map((y) => (
-                      <option key={y} value={y}>
-                        {y}
+                  : isBabyCategory
+                  ? babyYears.map((age) => (
+                      <option key={age} value={age}>
+                        {age}
+                      </option>
+                    ))
+                  : isKidsCategory
+                  ? kidsYears.map((year) => (
+                      <option key={year} value={year}>
+                        {year}
                       </option>
                     ))
                   : sizes.map((size) => (
@@ -377,7 +450,7 @@ const ProductCategory = ({
         )}
 
         {/* Stock pour les produits non vestimentaires */}
-        {!isClothingCategory && category && (
+        {!isClothingCategory && category.main && (
           <div className="flex justify-between mb-6 p-4 bg-indigo-50 rounded-lg">
             <div className="flex-1 mr-4">
               <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -403,11 +476,11 @@ const ProductCategory = ({
         <div className="flex justify-center mb-6">
           <button
             type="button"
-            onClick={isClothingCategory ? addVariant : addNonClothingVariant}
+            onClick={addVariant}
             disabled={
-              isClothingCategory
-                ? !newVariant.size || !selectedColor.title || !newVariant.stock
-                : !selectedColor.title || !newVariant.stock
+              !selectedColor.title ||
+              !newVariant.stock ||
+              (isClothingCategory && !newVariant.size)
             }
             className="flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200"
           >
@@ -427,7 +500,11 @@ const ProductCategory = ({
                     <tr>
                       {isClothingCategory && (
                         <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
-                          Size
+                          {isBabyCategory
+                            ? "Age"
+                            : isKidsCategory
+                            ? "Year"
+                            : "Size"}
                         </th>
                       )}
                       <th className="py-3 px-4 text-left text-sm font-semibold text-gray-700 border-b">
@@ -483,7 +560,7 @@ const ProductCategory = ({
                         </td>
                         <td className="py-3 px-4 border-b">
                           <div className="text-xs font-mono bg-gray-100 px-2 py-1 rounded">
-                            {variant.sku}
+                            {variant.sku || ""}
                           </div>
                         </td>
                         <td className="py-3 px-4 border-b text-center">
