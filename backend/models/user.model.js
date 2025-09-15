@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
 const { isEmail } = require("validator");
+const mongoosePaginate = require("mongoose-paginate-v2");
 
 const userSchema = new mongoose.Schema(
   {
@@ -21,7 +22,7 @@ const userSchema = new mongoose.Schema(
       select: false, // 👈 très important !
       // 🔐 Pour protéger les données sensibles (comme les mots de passe hashés) contre une exposition accidentelle.
       //  ce champ sera exclu des résultats de requêtes par défaut (comme find(), findOne(), etc.).
-      //console.log(user.password); // ➡️ undefined ❌
+      //console.log(user.password); // ➡ undefined ❌
     },
     fullName: { type: String, required: true },
     role: {
@@ -44,9 +45,44 @@ const userSchema = new mongoose.Schema(
     },
     profilePhoto: { type: String, default: "" },
     phoneNumber: Number,
+
+    isActive: {
+      type: Boolean,
+      default: true,
+    },
+    deactivationReason: {
+      type: String,
+      default: "",
+    },
+    deactivationDate: {
+      type: Date,
+    },
+    whoDesactivated: {
+      type: String,
+      enum: ["admin", "vender"],
+    },
+
+    totalSales: {
+      type: Number,
+      default: 0,
+    },
+    totalProducts: {
+      type: Number,
+      default: 0,
+    },
+    joinDate: {
+      type: Date,
+      default: Date.now,
+    },
+    lastActivity: {
+      type: Date,
+      default: Date.now,
+    },
   },
   { timestamps: true }
 );
+userSchema.plugin(mongoosePaginate);
+
 // createdAt and updateAt fields will be automatically added into the document
 
 // function (next) {} :

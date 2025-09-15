@@ -32,6 +32,17 @@ router.get(
   productsController.commentedProduct
 );
 
+router.get(
+  "/didOrderedProduct/:productId",
+  authMiddleware.ckeckTokens,
+  productsController.orderedProduct
+);
+
 router.get("/getLike/:id", productsController.getLike);
+
+router.get(
+  "/specificProducts/:gender/:category",
+  productsController.getSpecificProducts
+);
 
 module.exports = router;

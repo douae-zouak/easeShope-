@@ -64,6 +64,22 @@ const orderItemsSchema = new mongoose.Schema({
     ],
     default: "pending",
   },
+
+  // Pour les retours/remboursements
+  returnRequested: { type: Boolean, default: false },
+  returnReason: { type: String },
+  returnDate: { type: Date },
+  returnStatus: {
+    type: String,
+    enum: ["requested", "approved", "rejected", "completed", "not requested"],
+    default: "not requested",
+  },
+  images: [
+    {
+      url: { type: String, required: true },
+      publicId: { type: String, required: true },
+    },
+  ],
 });
 
 const addressSchema = new mongoose.Schema({
@@ -126,15 +142,6 @@ const OrderSchema = new mongoose.Schema(
     // Dates importantes
     paidAt: { type: Date },
     deliveredAt: { type: Date },
-
-    // Pour les retours/remboursements
-    returnRequested: { type: Boolean, default: false },
-    returnReason: { type: String },
-    returnStatus: {
-      type: String,
-      enum: ["requested", "approved", "rejected", "completed", "not requested"],
-      default: "not requested",
-    },
   },
   {
     timestamps: true,

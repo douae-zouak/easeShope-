@@ -9,6 +9,7 @@ exports.generateAccessToken = (userId) => {
   });
 };
 
+
 exports.generateRefreshToken = (userId) => {
   return jwt.sign({ userId }, process.env.REFRESH_TOKEN_SECRET_KEY, {
     expiresIn: "1d",

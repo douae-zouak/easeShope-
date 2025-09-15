@@ -179,6 +179,10 @@ exports.postLogin = async (req, res, next) => {
       res.json({ error: "Please verify your email first" });
     }
 
+    if (!user.isActive && user.whoDesactivated === "admin") {
+      res.json({ error: "Your account is desactivated" });
+    }
+
     // Generate tokens
     const accessToken = jwtConfig.generateAccessToken(user._id);
     const refreshToken = jwtConfig.generateRefreshToken(user._id);

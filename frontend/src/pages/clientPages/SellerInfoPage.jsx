@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
 
@@ -15,6 +14,7 @@ import Footer from "../../components/footer";
 
 const SellerInfoPage = () => {
   const { sellerId } = useParams();
+  const [activeTab, setActiveTab] = useState("reviews"); // "reviews" or "products"
 
   const {
     seller,
@@ -68,7 +68,7 @@ const SellerInfoPage = () => {
         />
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10 ">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 -mt-20 relative z-10">
         {/* Seller Profile Card */}
         <SellerProfileCard
           seller={seller}
@@ -76,53 +76,102 @@ const SellerInfoPage = () => {
           renderStars={renderStars}
         />
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Reviews Section */}
-          <div className="lg:col-span-2">
-            <CustumerReviews
-              sellerReviews={sellerReviews}
-              renderStars={renderStars}
-              commentId={commentId}
-            />
-
-            {/* Add Review Section */}
-            <AddReview
-              setNewReview={setNewReview}
-              newReview={newReview}
-              setRefresh={setRefresh}
-              sellerId={sellerId}
-            />
-          </div>
-
-          {/* Seller Stats */}
-          <div>
-            <SellerStatistics stats={stats} />
-          </div>
+        {/* Navigation Tabs */}
+        <div className="mt-8 border-b border-gray-200">
+          <nav className="-mb-px flex space-x-8">
+            <button
+              onClick={() => setActiveTab("reviews")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "reviews"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Reviews & Ratings
+            </button>
+            <button
+              onClick={() => setActiveTab("products")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                activeTab === "products"
+                  ? "border-indigo-500 text-indigo-600"
+                  : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+              }`}
+            >
+              Seller Products ({sellerActiveProducts.length})
+            </button>
+          </nav>
         </div>
-      </div>
 
-      <div className="container mx-auto px-4 py-8">
-        {/* seller products */}
-        {sellerActiveProducts.length > 0 && (
-          <div className="mb-12">
-            <div className="flex flex-col md:flex-row justify-between items-center mb-10">
-              <motion.h2
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true }}
-                className="text-3xl md:text-4xl font-bold text-gray-900"
-              >
-                Seller Products
-              </motion.h2>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {sellerActiveProducts.map((product) => (
-                <ClientProductCard key={product._id} product={product} />
-              ))}
-            </div>
-          </div>
-        )}
+        {/* Tab Content */}
+        <div className="mt-6">
+          {activeTab === "reviews" ? (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="grid grid-cols-1 lg:grid-cols-3 gap-8"
+            >
+              {/* Reviews Section */}
+              <div className="lg:col-span-2">
+                <CustumerReviews
+                  sellerReviews={sellerReviews}
+                  renderStars={renderStars}
+                  commentId={commentId}
+                />
+
+                {/* Add Review Section */}
+                <AddReview
+                  setNewReview={setNewReview}
+                  newReview={newReview}
+                  setRefresh={setRefresh}
+                  sellerId={sellerId}
+                />
+              </div>
+
+              {/* Seller Stats */}
+              <div>
+                <SellerStatistics stats={stats} />
+              </div>
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              {/* Seller Products Section */}
+              {sellerActiveProducts.length > 0 ? (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                  {sellerActiveProducts.map((product) => (
+                    <ClientProductCard key={product._id} product={product} />
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <svg
+                    className="mx-auto h-12 w-12 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-8m8 0h-8m0 0V9a2 2 0 00-2-2H6a2 2 0 00-2 2v4h8"
+                    />
+                  </svg>
+                  <h3 className="mt-4 text-lg font-medium text-gray-900">
+                    No products available
+                  </h3>
+                  <p className="mt-1 text-gray-500">
+                    This seller doesn't have any active products at the moment.
+                  </p>
+                </div>
+              )}
+            </motion.div>
+          )}
+        </div>
       </div>
 
       <Footer />

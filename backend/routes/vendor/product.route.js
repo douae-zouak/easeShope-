@@ -18,11 +18,12 @@ router.get("/get_product/:id", productController.getProductById);
 
 router.get("/search", productController.searchProducts);
 
+router.get("/searchSellerProducts", productController.searchSellerProducts);
+
 router.delete("/delete_product/:id", productController.deleteProduct);
 
 router.put("/edit_product/:id", productController.editProduct);
 
 router.delete("/delete_image/:publicId", productController.deleteImage);
-
 
 module.exports = router;

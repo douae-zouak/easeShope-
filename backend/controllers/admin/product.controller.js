@@ -1,4 +1,7 @@
 const Product = require("../../models/product.model");
+const User = require("../../models/user.model");
+
+const brevoConfig = require("../../config/brevo.config");
 
 // Obtenir tous les produits en attente de validation
 exports.getPendingProducts = async (req, res) => {
@@ -121,9 +124,18 @@ exports.rejectProduct = async (req, res) => {
     if (!product) {
       return res.status(404).json({
         success: false,
-        error: "Produit non trouvé",
+        error: "Product not found",
       });
     }
+
+    const seller = await User.findById(product.seller);
+
+    await brevoConfig.ProductRejected(
+      seller.email,
+      seller.fullName,
+      product.name,
+      rejectionReason.trim()
+    );
 
     res.status(200).json({
       success: true,

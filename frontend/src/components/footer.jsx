@@ -15,7 +15,7 @@ import {
 
 const Footer = () => {
   return (
-    <footer className="bg-black text-gray-200">
+    <footer className="bg-black text-gray-200 mt-15">
       {/* Trust Badges */}
       <div className="border-b border-gray-800">
         <div className="container mx-auto px-4 py-8">
@@ -144,9 +144,7 @@ const Footer = () => {
             <div className="space-y-3">
               <div className="flex items-start">
                 <MapPin className="mt-1 mr-3 flex-shrink-0" size={18} />
-                <span className="text-gray-400">
-                  Rabat, Morocco
-                </span>
+                <span className="text-gray-400">Rabat, Morocco</span>
               </div>
               <div className="flex items-center">
                 <Phone className="mr-3" size={18} />

@@ -4,6 +4,7 @@ const Product = require("../../models/product.model");
 const User = require("../../models/user.model");
 const SellerReview = require("../../models/SellerReviews");
 const ProductReview = require("../../models/ProductReviews");
+const Order = require("../../models/Order.model");
 
 exports.getProducts = async (req, res, next) => {
   try {
@@ -170,6 +171,28 @@ exports.commentedProduct = async (req, res, next) => {
   }
 };
 
+exports.orderedProduct = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const { productId } = req.params;
+
+    const orderByClient = await Order.findOne({
+      userId: userId,
+      "items.productId": productId,
+    });
+
+    if (!orderByClient) {
+      return res.json({
+        error: "This user had never ordered",
+      });
+    }
+
+    res.status(200).json({ orderedProductId: orderByClient._id });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.getLike = async (req, res, next) => {
   try {
     const { id } = req.params;
@@ -187,6 +210,35 @@ exports.getLike = async (req, res, next) => {
 
     res.status(200).json({
       similarProducts: similarProducts,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getSpecificProducts = async (req, res, next) => {
+  try {
+    const { gender, category } = req.params;
+
+    let products;
+
+    if (gender === "Woman" || gender === "Men") {
+      products = await Product.find({
+        gender: gender,
+        category: category,
+      });
+    } else {
+      products = await Product.find({
+        category: category,
+      });
+    }
+
+    if (!products || products.length === 0) {
+      return res.json({ error: "No product found for this category" });
+    }
+
+    res.status(200).json({
+      specificProducts: products || [],
     });
   } catch (error) {
     next(error);

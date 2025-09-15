@@ -18,6 +18,10 @@ const variantSchema = new mongoose.Schema({
     required: true,
   },
   sku: { type: String, required: true, unique: true },
+
+  chest: Number,
+  length: Number,
+  sleeve: Number,
 });
 
 const imageVariantSchema = new mongoose.Schema({
@@ -70,49 +74,34 @@ const productSchema = new mongoose.Schema(
 
     gender: {
       type: String,
-      enum: ["Men", "Woman", "Unisex"],
+      enum: ["Men", "Women", "Unisex"],
       default: "Unisex",
     },
 
     category: {
-      type: String,
-      required: true,
-      enum: [
-        "Mobile Phones",
-        "Laptops",
-        "Tablets",
-        "Cameras",
-        "Accessories",
-        "T-Shirts",
-        "Shirts",
-        "Jeans",
-        "Dresses",
-        "Jackets",
-        "Sweaters",
-        "Shoes",
-        "Cookware",
-        "Bedding",
-        "Decor",
-        "Storage",
-        "Lighting",
-        "Skincare",
-        "Makeup",
-        "Hair Care",
-        "Fitness Equipment",
-        "Athletic Shoes",
-        "Apparel",
-        "Outdoor Gear",
-        "Sports Accessories",
-        "Fiction",
-        "Non-Fiction",
-        "Comics",
-        "Educational",
-        "Children's Books",
-        "Clothing",
-        "Toys",
-        "School Supplies",
-        "Footwear",
-      ],
+      main: {
+        type: String,
+        required: true,
+        enum: [
+          "Electronics",
+          "Clothing",
+          "Shoes",
+          "Accessories",
+          "Home & Kitchen",
+          "Beauty",
+          "Sports",
+          "Books",
+          "Girls",
+          "Boys",
+          "Toys",
+          "Babies",
+        ],
+      },
+      sub: {
+        type: String,
+        required: true,
+        // Le enum sera validé dynamiquement selon la catégorie principale
+      },
     },
 
     originalPrice: {
@@ -151,7 +140,7 @@ const productSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ["draft", "pending", "active"],
+      enum: ["draft", "pending", "active", "rejected"],
       default: "draft",
     },
 

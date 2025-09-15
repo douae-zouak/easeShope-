@@ -9,19 +9,26 @@ const cors = require("cors");
 const path = require("path");
 
 const connectDB = require("./config/connectDB");
+
 const authRoutes = require("./routes/auth.route");
+
 const productRoutes = require("./routes/vendor/product.route");
 const profileRoutes = require("./routes/vendor/profile.route");
 const ordersRoutes = require("./routes/vendor/order.route");
+
 const errorMiddleware = require("./middlewares/error.middleware");
-const clientRoutes = require("./routes/Buyer/products.route");
-const cartRoutes = require("./routes/Buyer/cart.route");
-const favoriteRoutes = require("./routes/Buyer/favorite.route");
+const authMiddleware = require("./middlewares/auth.middleware");
+
 const paypalRoutes = require("./routes/Buyer/paypal.route");
 const sellerReviewRoutes = require("./routes/Buyer/sellerReview.route");
 const productReviewRoutes = require("./routes/Buyer/productReview.route");
-const authMiddleware = require("./middlewares/auth.middleware");
+const returnsRoutes = require("./routes/Buyer/returns.route");
+const clientRoutes = require("./routes/Buyer/products.route");
+const cartRoutes = require("./routes/Buyer/cart.route");
+const favoriteRoutes = require("./routes/Buyer/favorite.route");
+
 const adminProductRoutes = require("./routes/admin/product.route");
+const adminVendorRoutes = require("./routes/admin/vendor.route");
 
 dotenv.config();
 
@@ -78,9 +85,10 @@ app.use("/favorite", authMiddleware.ckeckTokens, favoriteRoutes);
 app.use("/paypal", authMiddleware.ckeckTokens, paypalRoutes);
 app.use("/sellerReview", authMiddleware.ckeckTokens, sellerReviewRoutes);
 app.use("/productReview", authMiddleware.ckeckTokens, productReviewRoutes);
+app.use("/returns", authMiddleware.ckeckTokens, returnsRoutes);
 
 app.use("/admin", adminProductRoutes);
-
+app.use("/admin", adminVendorRoutes);
 
 // Error handling
 app.use(errorMiddleware.notFoundHandler);

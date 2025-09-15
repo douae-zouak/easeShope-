@@ -10,7 +10,7 @@ exports.getSellerOrders = async (req, res, next) => {
     });
 
     if (!orders || orders.length === 0) {
-      return res.status(404).json({ error: "No orders found for this seller" });
+      return res.json({ error: "No orders found for this seller" });
     }
 
     // Filtrer les items pour ne garder que ceux du vendeur, tout en conservant la structure de la commande

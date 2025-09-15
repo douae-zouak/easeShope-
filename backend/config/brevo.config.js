@@ -128,3 +128,60 @@ exports.OrderReciept = async (recipient) => {
     throw new Error(`Error sending successful order : ${error.message}`);
   }
 };
+
+exports.ProductRejected = async (
+  recipient,
+  sellerName,
+  productName,
+  reason
+) => {
+  const msg = {
+    to: recipient,
+    from: process.env.EMAIL_USER,
+    subject: "Product rejcted! ",
+    html: emailTemplate.PRODUCT_REJECTION_EMAIL_TEMPLATE.replace(
+      "{userName}",
+      sellerName
+    )
+      .replace("{productName}", productName)
+      .replace("{rejectionReason}", reason),
+  };
+
+  try {
+    await transporter.sendMail(msg);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error(`Error sending product rejection order : ${error.message}`);
+  }
+};
+
+exports.VendorDesactivated = async (
+  recipient,
+  sellerName,
+  productName,
+  reason,
+  deactivationDate
+) => {
+  const msg = {
+    to: recipient,
+    from: process.env.EMAIL_USER,
+    subject: "Your are desactivated! ",
+    html: emailTemplate.DESACTIVATED_EMAIL_TEMPLATE.replace(
+      /{vendorName}/g,
+      sellerName
+    )
+      .replace(/{deactivationReason}/g, reason)
+      .replace(/{deactivationDate}/g, deactivationDate)
+      .replace(
+        /{policyLink}/g,
+        "https://yourmarketplace.com/vendor-guidelines"
+      ),
+  };
+
+  try {
+    await transporter.sendMail(msg);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error(`Error sending product rejection order : ${error.message}`);
+  }
+};

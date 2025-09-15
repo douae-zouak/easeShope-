@@ -222,3 +222,244 @@ exports.RECEIPT = `
 </body>
 </html>
 `;
+
+exports.PRODUCT_REJECTION_EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Product Rejection</title>
+</head>
+<body style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto; padding: 20px;">
+  <div style="background: linear-gradient(to right, #ff4b4b, #ff7b7b); padding: 25px; text-align: center; border-radius: 8px 8px 0 0;">
+    <h1 style="color: white; margin: 0; font-size: 24px;">Product Rejection</h1>
+  </div>
+  
+  <div style="background-color: #f9f9f9; padding: 25px; border-radius: 0 0 8px 8px; box-shadow: 0 3px 10px rgba(0,0,0,0.1);">
+    <p>Dear {userName},</p>
+    
+    <p>Thank you for submitting your product "<strong style="color: #ff4b4b;">{productName}</strong>" to our marketplace.</p>
+    
+    <p>After careful review, we regret to inform you that your product listing has <strong>not been approved</strong> at this time.</p>
+    
+    <div style="background-color: #fff4f4; border-left: 4px solid #ff4b4b; padding: 15px; margin: 20px 0;">
+      <h3 style="margin-top: 0; color: #ff4b4b;">Reason for Rejection:</h3>
+      <p style="margin-bottom: 0; font-style: italic;">{rejectionReason}</p>
+    </div>
+    
+    <p>To get your product approved, please address the issue mentioned above and resubmit your listing.</p>
+
+    
+    <p>If you have any questions or need further clarification, please don't hesitate to contact our support team.</p>
+    
+    <p>Best regards,<br>
+    <strong>The Marketplace Team</strong></p>
+  </div>
+  
+  <div style="text-align: center; margin-top: 25px; color: #888; font-size: 0.8em; padding: 15px; background-color: #f5f5f5; border-radius: 8px;">
+    <p>This is an automated message. Please do not reply to this email.</p>
+    <p>Need help? Contact our support team at <a href="mailto:support@marketplace.com" style="color: #4CAF50;">support@marketplace.com</a></p>
+    <p>© 2023 Marketplace Name. All rights reserved.</p>
+  </div>
+</body>
+</html>`;
+
+exports.DESACTIVATED_EMAIL_TEMPLATE = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Account Deactivation Notice</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: #f7f7f7;
+      color: #333333;
+      line-height: 1.6;
+      padding: 20px;
+    }
+    
+    .email-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background-color: #ffffff;
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+    
+    .email-header {
+      background: linear-gradient(to right, #ff4b4b, #ff7b7b);
+      padding: 25px;
+      text-align: center;
+    }
+    
+    .email-header h1 {
+      color: white;
+      font-size: 24px;
+      margin: 0;
+    }
+    
+    .email-body {
+      padding: 30px;
+    }
+    
+    .alert-box {
+      background-color: #fff4f4;
+      border-left: 4px solid #ff4b4b;
+      padding: 20px;
+      margin-bottom: 25px;
+      border-radius: 4px;
+    }
+    
+    .alert-box h3 {
+      color: #ff4b4b;
+      margin-top: 0;
+      margin-bottom: 10px;
+    }
+    
+    .reason-box {
+      background-color: #f8f9fa;
+      border: 1px solid #e9ecef;
+      padding: 15px;
+      border-radius: 6px;
+      margin: 20px 0;
+    }
+    
+    .reason-box h4 {
+      color: #495057;
+      margin-bottom: 10px;
+    }
+    
+    .next-steps {
+      background-color: #e8f4fd;
+      border-left: 4px solid #2196F3;
+      padding: 20px;
+      margin: 25px 0;
+      border-radius: 4px;
+    }
+    
+    .next-steps h3 {
+      color: #2196F3;
+      margin-top: 0;
+      margin-bottom: 15px;
+    }
+    
+    .contact-info {
+      background-color: #f9f9f9;
+      padding: 20px;
+      border-radius: 6px;
+      margin: 25px 0;
+      text-align: center;
+    }
+    
+    .button {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 12px 24px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-weight: bold;
+      margin: 15px 0;
+    }
+    
+    .footer {
+      background-color: #f5f5f5;
+      padding: 20px;
+      text-align: center;
+      font-size: 12px;
+      color: #666666;
+    }
+    
+    ul {
+      padding-left: 20px;
+      margin: 15px 0;
+    }
+    
+    li {
+      margin-bottom: 8px;
+    }
+    
+    @media (max-width: 600px) {
+      .email-body {
+        padding: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="email-container">
+    <div class="email-header">
+      <h1>Account blocked</h1>
+    </div>
+    
+    <div class="email-body">
+      <p>Dear {vendorName},</p>
+      
+      <p>We hope this message finds you well. We're writing to inform you about an important change to your vendor account status.</p>
+      
+      <div class="alert-box">
+        <h3>Account Deactivated</h3>
+        <p>Your shop account has been deactivated by our administration team.</p>
+      </div>
+      
+      <p>After careful review, we've determined that your account does not currently comply with our marketplace policies and guidelines.</p>
+      
+      <div class="reason-box">
+        <h4>Reason for Deactivation:</h4>
+        <p>{deactivationReason}</p>
+        <p><strong>Date of Deactivation:</strong> {deactivationDate}</p>
+      </div>
+      
+      <h3>What This Means:</h3>
+      <ul>
+        <li>Your products are no longer visible to customers</li>
+        <li>You cannot process new orders</li>
+        <li>You cannot access your vendor dashboard</li>
+        <li>Pending orders will be handled according to our policies</li>
+      </ul>
+      
+      <div class="next-steps">
+        <h3>Next Steps</h3>
+        <p>If you believe this deactivation was made in error, or if you'd like to appeal this decision:</p>
+        
+        <ol>
+          <li>Review our <a href="{policyLink}">Vendor Guidelines</a></li>
+          <li>Address the issues mentioned above</li>
+          <li>Submit an appeal through our vendor support portal</li>
+        </ol>
+        
+        <center>
+          <a href="{appealLink}" class="button">Submit Appeal</a>
+        </center>
+      </div>
+      
+      <div class="contact-info">
+        <h3>Need Help?</h3>
+        <p>Our support team is here to assist you with any questions:</p>
+        <p>Email: <a href="mailto:support@marketplace.com">support@marketplace.com</a></p>
+        <p>Phone: +1 (800) 123-4567</p>
+        <p>Hours: Monday-Friday, 9AM-5PM EST</p>
+      </div>
+      
+      <p>We value your participation in our marketplace and hope to assist you in resolving this matter.</p>
+      
+      <p>Best regards,<br>
+      <strong>The Marketplace Team</strong></p>
+    </div>
+    
+    <div class="footer">
+      <p>This is an automated message. Please do not reply to this email.</p>
+      <p>© 2023 Marketplace Name. All rights reserved.</p>
+      <p><a href="{unsubscribeLink}">Unsubscribe</a> from these notifications</p>
+    </div>
+  </div>
+</body>
+</html>`;

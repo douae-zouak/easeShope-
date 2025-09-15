@@ -185,6 +185,25 @@ exports.searchProducts = async (req, res, next) => {
   }
 };
 
+exports.searchSellerProducts = async (req, res, next) => {
+  try {
+    const { query } = req.query; // ?query=...
+    const sellerId = req.user._id;
+
+    const products = await Product.find({
+      seller: sellerId,
+      $or: [
+        { name: { $regex: query, $options: "i" } },
+        { category: { $regex: query, $options: "i" } },
+      ],
+    });
+
+    res.status(200).json({ products: products });
+  } catch (error) {
+    next(error);
+  }
+};
+
 exports.editProduct = async (req, res, next) => {
   const { id } = req.params;
   const updateData = req.body;
