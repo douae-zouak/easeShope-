@@ -1,5 +1,4 @@
 import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
 
 const VendorLayout = ({ children }) => {
   return (

@@ -180,7 +180,7 @@ const AddReview = ({ productId, onReviewAdded }) => {
             >
               {imagePreviews.map((preview, index) => (
                 <motion.div
-                  key={images[index].name + "-" + index}
+                  key={`preview-${preview}`}
                   className="relative rounded-lg overflow-hidden shadow-md group"
                   initial={{ opacity: 0, scale: 0.8 }}
                   animate={{ opacity: 1, scale: 1 }}

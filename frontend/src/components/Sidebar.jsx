@@ -9,14 +9,17 @@ import React from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useOrderStore } from "../store/order.store";
+import { useReturnStore } from "../store/return.store";
 
 const Sidebar = () => {
   const location = useLocation(); // Pour détecter la page active
   const navigate = useNavigate();
   const { sellerOrders, getSellerOrders } = useOrderStore();
+  const { getApprovedReturn, approvedReturn } = useReturnStore();
 
   useEffect(() => {
     getSellerOrders();
+    getApprovedReturn();
   }, []);
   // Fonction pour vérifier si un lien est actif
   const isActive = (path) => location.pathname === path;
@@ -76,7 +79,7 @@ const Sidebar = () => {
               icon={<Repeat size={20} />}
               text="Returns"
               active={isActive("/vendor/returns")}
-              alert={sellerOrders.length !== 0 ? true : false}
+              alert={approvedReturn.length !== 0 ? true : false}
               link="/vendor/returns"
             />
 

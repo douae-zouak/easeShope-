@@ -3,11 +3,11 @@ import { Link } from "react-router-dom";
 import { CheckCircle, ArrowLeft, Download, Star, Truck } from "lucide-react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import { useProductStore } from "../../store/product.store";
+import { useCartStore } from "../../store/cart.store";
 
 const PaymentSuccess = () => {
   const [showConfetti, setShowConfetti] = useState(true);
-  const { total } = useProductStore();
+  const { total } = useCartStore();
 
   useEffect(() => {
     const timer = setTimeout(() => {

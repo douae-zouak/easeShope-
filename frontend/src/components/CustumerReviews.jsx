@@ -3,13 +3,21 @@ import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import { useCommentStore } from "../store/comment.store";
 import { Trash2 } from "lucide-react";
+import { useUserStore } from "../store/user.store";
 
-const CustumerReviews = ({ sellerReviews, renderStars, commentId }) => {
+const CustumerReviews = ({
+  sellerReviews,
+  renderStars,
+  commentId,
+  sellerId,
+}) => {
   const { deleteComment } = useCommentStore();
+  const { commented } = useUserStore();
 
   const onDelete = async (reviewId) => {
     try {
       const res = await deleteComment(reviewId);
+      commented(sellerId);
       if (res.error) {
         toast.error(res.error);
       } else {
@@ -36,7 +44,7 @@ const CustumerReviews = ({ sellerReviews, renderStars, commentId }) => {
           {sellerReviews.length > 0 ? (
             sellerReviews.map((review) => (
               <motion.div
-                key={review.id}
+                key={review._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}

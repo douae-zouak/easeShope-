@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useOrderStore } from "../../store/order.store";
 import OrderHeader from "../../components/OrderHeader";
 import ClientOrders from "../../components/ClientOrders";
+import ProductDetailsNav from "../../components/ProductDetailsNav";
 
 const Orders = () => {
   const [filterStatus, setFilterStatus] = useState("all");
@@ -60,6 +61,7 @@ const Orders = () => {
 
   return (
     <div className="min-h-screen bg-gray-100 py-8 px-4 sm:px-6 lg:px-8">
+      <ProductDetailsNav />
       <div className="flex flex-row items-center gap-3 pt-5 ml-16">
         <Link to="/home">
           <MoveLeft

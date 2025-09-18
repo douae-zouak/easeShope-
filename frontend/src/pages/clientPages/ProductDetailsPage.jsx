@@ -35,22 +35,21 @@ const ProductDetailsPage = () => {
     useProductStore();
   const { getProductReviews, productReviews } = useCommentStore();
   const {
-    commentedProduct,
-    commentProductId,
     orderedProduct,
     orderedProductId,
+    commentedProduct,
+    commentProductId,
   } = useUserStore();
   const { user } = useAuthStore();
 
   const navigate = useNavigate();
-  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     getProductReviews(id, currentPage, itemsPerPage);
     commentedProduct(id);
     orderedProduct(id);
     getLike(id);
-  }, [refresh, id, currentPage]);
+  }, [id, currentPage]);
 
   useEffect(() => {
     const loadProductData = async () => {
@@ -169,17 +168,17 @@ const ProductDetailsPage = () => {
             <CustumerProductReviews
               productReviews={productReviews}
               renderStars={renderStars}
-              commentId={commentProductId}
+              id={id}
             />
 
             {/* Add Review Section */}
-            {!commentProductId &&
-              user?.role === "buyer" &&
-              orderedProductId && (
+            {user?.role === "buyer" &&
+              orderedProductId &&
+              !commentProductId && (
                 <AddProductReview
                   onReviewAdded={() => {
-                    setRefresh((prev) => !prev);
                     setCurrentPage(1);
+                    commentedProduct(id);
                   }}
                   productId={id}
                 />

@@ -22,6 +22,7 @@ import toast from "react-hot-toast";
 const ClientOrders = ({ filteredOrders }) => {
   const [reason, setReason] = useState("");
   const [request, setRequest] = useState("");
+  const [requested, setRequested] = useState(false);
   const [imagePreviews, setImagePreviews] = useState([]);
   const [images, setImages] = useState([]);
   const [expandedOrder, setExpandedOrder] = useState(null);
@@ -211,6 +212,7 @@ const ClientOrders = ({ filteredOrders }) => {
       setImagePreviews([]);
       setImages([]);
       setRequest("");
+      setRequested(true);
     }
   };
 
@@ -367,7 +369,8 @@ const ClientOrders = ({ filteredOrders }) => {
                                   </span>
                                 </div>
                                 {item.itemStatus === "delivered" &&
-                                  item.returnStatus !== "requested" && (
+                                  !item.returnRequested &&
+                                  !requested && (
                                     <motion.button
                                       whileHover={{ scale: 1.02 }}
                                       whileTap={{ scale: 0.98 }}
@@ -378,11 +381,11 @@ const ClientOrders = ({ filteredOrders }) => {
                                       className="flex items-center justify-center gap-2 px-4 py-2  text-blue-500 hover:text-blue-700  transition-colors  w-full md:w-auto"
                                     >
                                       <RotateCcw size={18} />
-                                      Demander un retour
+                                      Return request
                                     </motion.button>
                                   )}
                                 <AnimatePresence>
-                                  {item.returnStatus === "requested" && (
+                                  {(item.returnRequested || requested) && (
                                     <motion.div
                                       initial={{ opacity: 0, y: 10 }}
                                       animate={{ opacity: 1, y: 0 }}
@@ -419,7 +422,7 @@ const ClientOrders = ({ filteredOrders }) => {
                               </div>
                             </div>
                           </div>
-                          {request === item.sku && (
+                          {request === item.productId && (
                             <div className="mt-6">
                               <div className="mb-6 relative">
                                 <input
@@ -513,12 +516,6 @@ const ClientOrders = ({ filteredOrders }) => {
                                 </AnimatePresence>
                               </div>
 
-                              {console.log(
-                                "pr id : ",
-                                item.productId,
-                                "order id : ",
-                                expandedOrder
-                              )}
                               {/* Submit Button */}
                               <motion.button
                                 whileHover={{

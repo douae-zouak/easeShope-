@@ -4,16 +4,20 @@ import toast from "react-hot-toast";
 import { useCommentStore } from "../store/comment.store";
 import { Trash2, X } from "lucide-react";
 import { useState } from "react";
+import { useAuthStore } from "../store/auth.store";
+import { useUserStore } from "../store/user.store";
 
-const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
+const CustumerProductReviews = ({ productReviews, renderStars, id }) => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const { deleteProductComment } = useCommentStore();
+  const { user } = useAuthStore();
+  const { commentedProduct } = useUserStore();
 
   const onDelete = async (reviewId) => {
     try {
       const res = await deleteProductComment(reviewId);
-      console.log("resp : ", res);
+      commentedProduct(id);
       if (res.error) {
         toast.error(res.error);
       } else {
@@ -40,7 +44,7 @@ const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
           {productReviews.length > 0 ? (
             productReviews.map((review) => (
               <motion.div
-                key={review.id}
+                key={review._id}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
@@ -51,7 +55,9 @@ const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
                   <div className="flex-shrink-0">
                     <div className="h-10 w-10 rounded-full bg-gradient-to-r from-indigo-400 to-purple-500 flex items-center justify-center shadow-md">
                       <span className="text-white font-medium uppercase">
-                        {review.userId?.fullName?.charAt(0) || "U"}
+                        {review.userId?.fullName?.charAt(0)}
+
+                        {console.log(review.userId)}
                       </span>
                     </div>
                   </div>
@@ -101,7 +107,7 @@ const CustumerProductReviews = ({ productReviews, renderStars, commentId }) => {
                   </div>
                 )}
 
-                {commentId && review._id === commentId && (
+                {review.userId.fullName === user.fullName && (
                   <div className="absolute bottom-0 right-0">
                     <div className="flex space-x-2">
                       <button

@@ -12,10 +12,7 @@ import SellerStatistics from "../../components/SellerStatistics";
 import ClientProductCard from "../../components/ClientProductCard";
 
 const SellerInfoPage = () => {
-  const { user } = useUserStore();
   const { sellerId } = useParams();
-  const isAdmin = user?.role === "admin";
-  console.log(isAdmin);
 
   const {
     seller,
@@ -25,18 +22,11 @@ const SellerInfoPage = () => {
     getSellerExperience,
     commentId,
     commented,
-    loading: userLoading,
-    error: userError,
+    isLoading,
   } = useUserStore();
-  const {
-    sellerReviews,
-    getSellerReviews,
-    stats,
-    loading: reviewsLoading,
-    error: reviewsError,
-  } = useCommentStore();
 
-  const [refresh, setRefresh] = useState(false);
+  const { sellerReviews, getSellerReviews, stats } = useCommentStore();
+
   const [activeTab, setActiveTab] = useState("products"); // 'products' or 'reviews'
 
   useEffect(() => {
@@ -55,7 +45,7 @@ const SellerInfoPage = () => {
     };
 
     fetchData();
-  }, [refresh, sellerId]);
+  }, [sellerId]);
 
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, index) => (
@@ -73,49 +63,11 @@ const SellerInfoPage = () => {
     ));
   };
 
-  // Loading state
-  if (userLoading || reviewsLoading) {
+  if (isLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto"></div>
-          <p className="mt-4 text-gray-600">Loading seller information...</p>
-        </div>
-      </div>
-    );
-  }
-
-  // Error state
-  if (userError || reviewsError) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center p-8 bg-white rounded-lg shadow-md">
-          <svg
-            className="w-16 h-16 text-red-500 mx-auto"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-            />
-          </svg>
-          <h2 className="text-2xl font-bold text-gray-900 mt-4">
-            Something went wrong
-          </h2>
-          <p className="text-gray-600 mt-2">
-            We couldn't load the seller information. Please try again later.
-          </p>
-          <button
-            onClick={() => setRefresh(!refresh)}
-            className="mt-4 px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Try Again
-          </button>
-        </div>
+      <div className="flex flex-col items-center justify-center h-60vh gap-5">
+        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-gray-900"></div>
+        <p className="text-gray-600">Loading pending products...</p>
       </div>
     );
   }

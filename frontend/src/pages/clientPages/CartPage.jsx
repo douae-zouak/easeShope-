@@ -1,4 +1,3 @@
-import { useEffect } from "react";
 import { ArrowLeft, ShoppingBag } from "lucide-react";
 import { Link } from "react-router-dom";
 import PaymentSidebar from "../../components/PaymentSidebar";
@@ -8,14 +7,8 @@ import CartItem from "../../components/CartItem";
 import { useCartStore } from "../../store/cart.store";
 
 export default function CartPage() {
-  const {
-    cart,
-    updateQuantity,
-    deleteProductFromCart,
-    total,
-    isLoading,
-  } = useCartStore();
-
+  const { cart, updateQuantity, deleteProductFromCart, total, isLoading } =
+    useCartStore();
 
   if (!cart || cart.length === 0) {
     return (
@@ -52,6 +45,7 @@ export default function CartPage() {
     <div className="min-h-screen flex flex-col lg:flex-row bg-gray-100">
       {/* Colonne principale (cart + footer) */}
       <div className="flex-1 p-4 lg:p-8">
+        {console.log("here cart : ", cart)}
         <CheckoutHeader />
 
         {/* Zone scrollable */}

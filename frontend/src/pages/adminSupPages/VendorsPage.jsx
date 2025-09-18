@@ -61,18 +61,7 @@ const VendorsPage = () => {
   };
 
   if (error) {
-    return (
-      <motion.div
-        className="p-6"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.3 }}
-      >
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <p className="text-red-700">Error: {error}</p>
-        </div>
-      </motion.div>
-    );
+    return toast.error(`Error : ${error}`);
   }
 
   return (

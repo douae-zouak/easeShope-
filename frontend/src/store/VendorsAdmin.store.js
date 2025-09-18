@@ -2,7 +2,7 @@
 import { create } from "zustand";
 import axios from "axios";
 
-const API_URL = "http://localhost:3000";
+const API_URL = "http://localhost:3000/admin/vendor/";
 
 export const useAdminVendorStore = create((set, get) => ({
   vendors: [],
@@ -39,7 +39,7 @@ export const useAdminVendorStore = create((set, get) => ({
         limit: currentPagination.limit,
       };
 
-      const response = await axios.get(`${API_URL}/admin/vendors`, { params });
+      const response = await axios.get(`${API_URL}`, { params });
 
       set({
         vendors: response.data.vendors,
@@ -61,7 +61,7 @@ export const useAdminVendorStore = create((set, get) => ({
   getVendorDetails: async (vendorId) => {
     try {
       set({ loading: true, error: null });
-      const response = await axios.get(`${API_URL}/admin/vendor/${vendorId}`);
+      const response = await axios.get(`${API_URL}/${vendorId}`);
       set({ currentVendor: response.data.vendor, loading: false });
     } catch (error) {
       const errorMessage = error.response?.data?.error || error.message;
@@ -74,10 +74,14 @@ export const useAdminVendorStore = create((set, get) => ({
   desactivateVendor: async (vendorId, reason) => {
     try {
       set({ loading: true, error: null });
-      const response = await axios.patch(
-        `${API_URL}/admin/vendor/desactivate/${vendorId}`,
-        { reason }
-      );
+      const response = await axios.patch(`${API_URL}/desactivate/${vendorId}`, {
+        reason,
+      });
+
+      if (response.data.error) {
+        set({ error: response.data.error });
+        return { error: response.data.error };
+      }
 
       // Mettre à jour la liste des vendeurs
       const vendors = get().vendors.map((vendor) =>
@@ -99,9 +103,7 @@ export const useAdminVendorStore = create((set, get) => ({
   activateVendor: async (vendorId) => {
     try {
       set({ loading: true, error: null });
-      const response = await axios.patch(
-        `${API_URL}/admin/vendor/activate/${vendorId}`
-      );
+      const response = await axios.patch(`${API_URL}/activate/${vendorId}`);
 
       // Mettre à jour la liste des vendeurs
       const vendors = get().vendors.map((vendor) =>
@@ -123,12 +125,9 @@ export const useAdminVendorStore = create((set, get) => ({
   deleteVendor: async (vendorId, reason) => {
     try {
       set({ loading: true, error: null });
-      const response = await axios.delete(
-        `${API_URL}/admin/vendor/delete/${vendorId}`,
-        {
-          data: { reason },
-        }
-      );
+      const response = await axios.delete(`${API_URL}/delete/${vendorId}`, {
+        data: { reason },
+      });
 
       // Retirer le vendeur de la liste
       const vendors = get().vendors.filter((vendor) => vendor._id !== vendorId);

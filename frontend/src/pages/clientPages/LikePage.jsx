@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Link, useNavigate } from "react-router-dom";
 import { MoveLeft } from "lucide-react";
 import { useFavoriteStore } from "../../store/favorite.store";
+import ProductDetailsNav from "../../components/ProductDetailsNav";
 
 const LikePage = () => {
   const { favorites, toggleToFavorite } = useFavoriteStore();
@@ -52,6 +53,7 @@ const LikePage = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      <ProductDetailsNav />
       <div className="flex flex-row items-center gap-3 pt-7 ml-13">
         <Link to="/home">
           <MoveLeft

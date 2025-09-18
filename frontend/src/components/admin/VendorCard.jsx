@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 
 const VendorCard = ({ vendor, onAction, index }) => {
@@ -28,14 +29,6 @@ const VendorCard = ({ vendor, onAction, index }) => {
     const index = name.length % colors.length;
     return colors[index];
   };
-
-  // Fonction pour convertir les couleurs oklch en hex (approximation)
-  // const oklchToHex = (l, c, h) => {
-  //   // Conversion simplifiée - pour une vraie conversion, utilisez une librairie
-  //   if (l > 0.6) return "#fef3c7"; // Jaune clair pour hover deactivate
-  //   if (h > 200 && h < 260) return "#d1fae5"; // Vert clair pour hover activate
-  //   return "#fee2e2"; // Rouge clair pour hover delete
-  // };
 
   return (
     <motion.div

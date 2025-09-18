@@ -5,6 +5,7 @@ import axios from "axios";
 const API_URL = "http://localhost:3000/product";
 const API_CLIENT_URL = "http://localhost:3000";
 const API_PAYMENT_URL = "http://localhost:3000/paypal";
+const API_ADMIN_URL = "http://localhost:3000/admin/product";
 
 axios.defaults.withCredentials = true;
 
@@ -534,7 +535,7 @@ export const useProductStore = create(
         set({ isLoading: true });
         try {
           const response = await axios.get(
-            `${API_CLIENT_URL}/admin/pending-products?page=${page}&limit=${limit}`,
+            `${API_ADMIN_URL}/pending-products?page=${page}&limit=${limit}`,
             { withCredentials: true }
           );
 
@@ -560,7 +561,7 @@ export const useProductStore = create(
         try {
           const response = await axios.get(
             `
-      ${API_CLIENT_URL}/admin/product/${productId}`,
+      ${API_ADMIN_URL}/${productId}`,
             { withCredentials: true }
           );
 
@@ -579,7 +580,7 @@ export const useProductStore = create(
         set({ isLoading: true });
         try {
           const response = await axios.put(
-            `${API_CLIENT_URL}/admin/approve-product/${productId}`,
+            `${API_ADMIN_URL}/approve-product/${productId}`,
             {},
             { withCredentials: true }
           );
@@ -607,7 +608,7 @@ export const useProductStore = create(
         set({ isLoading: true });
         try {
           const response = await axios.put(
-            `${API_CLIENT_URL}/admin/reject-product/${productId}`,
+            `${API_ADMIN_URL}/reject-product/${productId}`,
             { rejectionReason },
             { withCredentials: true }
           );

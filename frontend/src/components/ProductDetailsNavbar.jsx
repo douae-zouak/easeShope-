@@ -163,7 +163,7 @@ const GENDER_CATEGORIES = {
   ],
 };
 
-const ProductDetailsNav = () => {
+const ProductDetailsNavbar = ({ search, setSearch }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [activeGender, setActiveGender] = useState("women");
   const [activeCategory, setActiveCategory] = useState(null);
@@ -220,6 +220,23 @@ const ProductDetailsNav = () => {
       >
         <div>
           <div className="flex justify-end items-center h-16 mr-10">
+            {/* Search (desktop) */}
+            <div className="hidden md:flex items-center flex-1 max-w-sm mx-70">
+              <div className="relative w-full">
+                <input
+                  type="text"
+                  placeholder="Search for products..."
+                  className="w-full px-4 py-2 pl-10 pr-4 border-b border-gray-500 focus:outline-none focus:border-[#6a59d6]"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                />
+                <Search
+                  size={20}
+                  className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400"
+                />
+              </div>
+            </div>
+
             {/* User actions */}
             <div>
               {user?.role === "buyer" ? (
@@ -563,4 +580,4 @@ const ProductDetailsNav = () => {
   );
 };
 
-export default ProductDetailsNav;
+export default ProductDetailsNavbar;

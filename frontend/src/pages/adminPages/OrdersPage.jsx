@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useOrderStore } from "../../store/order.store";
 import VendorNav from "../../components/VendorNav";
+import { AlertCircle, CheckCircle, Clock, Package, Truck } from "lucide-react";
 
 const OrderTable = () => {
   const { sellerOrders, getSellerOrders, isLoading, updateOrderItemStatus } =
@@ -50,6 +51,45 @@ const OrderTable = () => {
     { value: "shipped", label: "Shipped" },
     { value: "delivered", label: "Delivered" },
   ];
+
+  // Fonction pour obtenir l'icône du statut
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "delivered":
+        return <CheckCircle size={18} />;
+      case "shipped":
+        return <Truck size={18} />;
+      case "processing":
+        return <Package size={18} />;
+      case "packing":
+        return <Package size={18} />;
+      case "pending":
+        return <Clock size={18} />;
+      default:
+        return <AlertCircle size={18} />;
+    }
+  };
+
+  // Fonction pour déterminer le statut global d'une commande
+  const getOverallOrderStatus = (order) => {
+    const statusPriority = {
+      pending: 1,
+      processing: 2,
+      packing: 3,
+      shipped: 4,
+      delivered: 5,
+    };
+
+    // Trouver le statut le plus bas dans la commande
+    let lowestStatus = "delivered";
+    for (const item of order.items) {
+      if (statusPriority[item.itemStatus] < statusPriority[lowestStatus]) {
+        lowestStatus = item.itemStatus;
+      }
+    }
+
+    return lowestStatus;
+  };
 
   // Filter orders by status and search query
   const filteredOrders = sellerOrders.filter((order) => {
@@ -160,227 +200,244 @@ const OrderTable = () => {
         </div>
       ) : (
         <div className="space-y-4">
-          {filteredOrders.map((order) => (
-            <motion.div
-              key={order._id}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-white rounded-xl shadow overflow-hidden"
-            >
-              {/* Order header */}
-              <div
-                className="p-4 bg-gray-50 flex justify-between items-center cursor-pointer"
-                onClick={() =>
-                  setExpandedOrder(
-                    expandedOrder === order._id ? null : order._id
-                  )
-                }
+          {filteredOrders.map((order) => {
+            const overallStatus = getOverallOrderStatus(order);
+            return (
+              <motion.div
+                key={order._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="bg-white rounded-xl shadow overflow-hidden"
               >
-                <div>
-                  <h3 className="font-semibold text-gray-800">
-                    Order #{order.orderNumber}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    Placed on {new Date(order.createdAt).toLocaleDateString()}
-                  </p>
-                </div>
-                <div className="flex items-center">
-                  <span className="text-sm text-gray-600 mr-4">
-                    {order.items.length} item(s)
-                  </span>
-                  <motion.div
-                    animate={{ rotate: expandedOrder === order._id ? 180 : 0 }}
-                    transition={{ duration: 0.2 }}
-                  >
-                    <svg
-                      className="w-5 h-5 text-gray-500"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
+                {/* Order header */}
+                <div
+                  className="p-4 bg-gray-50 flex justify-between items-center cursor-pointer"
+                  onClick={() =>
+                    setExpandedOrder(
+                      expandedOrder === order._id ? null : order._id
+                    )
+                  }
+                >
+                  <div>
+                    <h3 className="font-semibold text-gray-800">
+                      Order #{order.orderNumber}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      Placed on {new Date(order.createdAt).toLocaleDateString()}
+                    </p>
+                  </div>
+                  <div className="flex items-center">
+                    <span
+                      className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium mr-2 ${getStatusColor(
+                        overallStatus
+                      )}`}
                     >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M19 9l-7 7-7-7"
-                      />
-                    </svg>
-                  </motion.div>
+                      {getStatusIcon(overallStatus)}
+                      <span className="ml-1 capitalize">{overallStatus}</span>
+                    </span>
+                    <span className="text-sm text-gray-600 mr-4">
+                      {order.items.length} item(s)
+                    </span>
+                    <motion.div
+                      animate={{
+                        rotate: expandedOrder === order._id ? 180 : 0,
+                      }}
+                      transition={{ duration: 0.2 }}
+                    >
+                      <svg
+                        className="w-5 h-5 text-gray-500"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M19 9l-7 7-7-7"
+                        />
+                      </svg>
+                    </motion.div>
+                  </div>
                 </div>
-              </div>
 
-              {/* Order items (appears with animation) */}
-              <AnimatePresence>
-                {expandedOrder === order._id && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: "auto", opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    transition={{ duration: 0.3 }}
-                    className="overflow-hidden"
-                  >
-                    <div className="p-4 border-t">
-                      <h4 className="font-medium text-gray-700 mb-3">Items:</h4>
-                      <div className="space-y-4">
-                        {order.items.map((item) => (
-                          <motion.div
-                            key={item._id || `${order._id}-${item.productId}`}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1 }}
-                            transition={{ delay: 0.1 }}
-                            className="flex flex-col md:flex-row items-start p-4 rounded-lg border border-gray-200"
-                          >
-                            <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden mb-3 md:mb-0">
-                              {item.colorImages &&
-                              item.colorImages.length > 0 ? (
-                                <img
-                                  src={item.colorImages[0]}
-                                  alt={item.productName}
-                                  className="w-full h-full object-cover"
-                                />
-                              ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400">
-                                  <svg
-                                    className="w-8 h-8"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                                      clipRule="evenodd"
-                                    />
-                                  </svg>
-                                </div>
-                              )}
-                            </div>
-
-                            <div className="flex-1 md:ml-4">
-                              <h5 className="font-medium text-gray-800">
-                                {item.productName}
-                              </h5>
-                              <div className="flex flex-wrap gap-2 mt-1">
-                                <span className="text-sm text-gray-600">
-                                  Qty: {item.quantity}
-                                </span>
-                                {item.size && (
-                                  <span className="text-sm text-gray-600">
-                                    Size: {item.size}
-                                  </span>
-                                )}
-                                <div className="flex items-center">
-                                  <span className="text-sm text-gray-600 mr-1">
-                                    Color:
-                                  </span>
-                                  <div
-                                    className="w-4 h-4 rounded-full border border-gray-300"
-                                    style={{
-                                      backgroundColor: item.colorCode || "#ccc",
-                                    }}
-                                    title={item.colorTitle}
-                                  ></div>
-                                </div>
-                                <span className="text-sm text-gray-600">
-                                  SKU: {item.sku}
-                                </span>
-                                <span className="text-sm font-medium">
-                                  Price: {item.priceAtPurchase?.toFixed(2)} DH
-                                </span>
-                              </div>
-                            </div>
-
-                            <div className="mt-3 md:mt-0 md:ml-4 w-full md:w-auto">
-                              <div className="flex flex-col items-start md:items-end">
-                                <span
-                                  className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
-                                    item.itemStatus
-                                  )}`}
-                                >
-                                  {item.itemStatus === "pending" && "Pending"}
-                                  {item.itemStatus === "packing" && "Packing"}
-                                  {item.itemStatus === "processing" &&
-                                    "Processing"}
-                                  {item.itemStatus === "shipped" && "Shipped"}
-                                  {item.itemStatus === "delivered" &&
-                                    "Delivered"}
-                                </span>
-
-                                {/* Status selector - only if status is not "delivered" */}
-                                {item.itemStatus !== "delivered" && (
-                                  <div className="mt-2 w-full md:w-40">
-                                    <select
-                                      value={item.itemStatus}
-                                      onChange={(e) =>
-                                        handleStatusChange(
-                                          order._id,
-                                          item._id,
-                                          e.target.value
-                                        )
-                                      }
-                                      className="block w-full rounded-md border border-gray-300 py-1.5 px-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                {/* Order items (appears with animation) */}
+                <AnimatePresence>
+                  {expandedOrder === order._id && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="p-4 border-t">
+                        <h4 className="font-medium text-gray-700 mb-3">
+                          Items:
+                        </h4>
+                        <div className="space-y-4">
+                          {order.items.map((item) => (
+                            <motion.div
+                              key={item._id || `${order._id}-${item.productId}`}
+                              initial={{ opacity: 0 }}
+                              animate={{ opacity: 1 }}
+                              transition={{ delay: 0.1 }}
+                              className="flex flex-col md:flex-row items-start p-4 rounded-lg border border-gray-200"
+                            >
+                              <div className="flex-shrink-0 w-16 h-16 bg-gray-200 rounded-md overflow-hidden mb-3 md:mb-0">
+                                {item.colorImages &&
+                                item.colorImages.length > 0 ? (
+                                  <img
+                                    src={item.colorImages[0]}
+                                    alt={item.productName}
+                                    className="w-full h-full object-cover"
+                                  />
+                                ) : (
+                                  <div className="w-full h-full flex items-center justify-center text-gray-400">
+                                    <svg
+                                      className="w-8 h-8"
+                                      fill="currentColor"
+                                      viewBox="0 0 20 20"
                                     >
-                                      {statusOptions
-                                        .filter((option) => {
-                                          // Prevent going back in status flow
-                                          const currentStatusIndex =
-                                            statusOptions.findIndex(
-                                              (o) => o.value === item.itemStatus
-                                            );
-                                          const optionIndex =
-                                            statusOptions.findIndex(
-                                              (o) => o.value === option.value
-                                            );
-                                          return (
-                                            optionIndex >= currentStatusIndex
-                                          );
-                                        })
-                                        .map((option) => (
-                                          <option
-                                            key={option.value}
-                                            value={option.value}
-                                          >
-                                            {option.label}
-                                          </option>
-                                        ))}
-                                    </select>
+                                      <path
+                                        fillRule="evenodd"
+                                        d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                                        clipRule="evenodd"
+                                      />
+                                    </svg>
                                   </div>
                                 )}
                               </div>
-                            </div>
-                          </motion.div>
-                        ))}
-                      </div>
-                    </div>
 
-                    {/* Shipping address */}
-                    {order.shippingAddress && (
-                      <div className="p-4 bg-gray-50 border-t">
-                        <h4 className="font-medium text-gray-700 mb-2">
-                          Shipping Address:
-                        </h4>
-                        <p className="text-sm text-gray-800">
-                          {order.shippingAddress.name}
-                        </p>
-                        <p className="text-sm text-gray-800">
-                          {order.shippingAddress.street}
-                        </p>
-                        <p className="text-sm text-gray-800">
-                          {order.shippingAddress.postalCode}{" "}
-                          {order.shippingAddress.city}
-                        </p>
-                        <p className="text-sm text-gray-800">
-                          {order.shippingAddress.phoneNumber}
-                        </p>
-                        <p className="text-sm text-gray-800">
-                          {order.shippingAddress.email}
-                        </p>
+                              <div className="flex-1 md:ml-4">
+                                <h5 className="font-medium text-gray-800">
+                                  {item.productName}
+                                </h5>
+                                <div className="flex flex-wrap gap-2 mt-1">
+                                  <span className="text-sm text-gray-600">
+                                    Qty: {item.quantity}
+                                  </span>
+                                  {item.size && (
+                                    <span className="text-sm text-gray-600">
+                                      Size: {item.size}
+                                    </span>
+                                  )}
+                                  <div className="flex items-center">
+                                    <span className="text-sm text-gray-600 mr-1">
+                                      Color:
+                                    </span>
+                                    <div
+                                      className="w-4 h-4 rounded-full border border-gray-300"
+                                      style={{
+                                        backgroundColor:
+                                          item.colorCode || "#ccc",
+                                      }}
+                                      title={item.colorTitle}
+                                    ></div>
+                                  </div>
+                                  <span className="text-sm text-gray-600">
+                                    SKU: {item.sku}
+                                  </span>
+                                  <span className="text-sm font-medium">
+                                    Price: {item.priceAtPurchase?.toFixed(2)} DH
+                                  </span>
+                                </div>
+                              </div>
+
+                              <div className="mt-3 md:mt-0 md:ml-4 w-full md:w-auto">
+                                <div className="flex flex-col items-start md:items-end">
+                                  <span
+                                    className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${getStatusColor(
+                                      item.itemStatus
+                                    )}`}
+                                  >
+                                    {item.itemStatus === "pending" && "Pending"}
+                                    {item.itemStatus === "packing" && "Packing"}
+                                    {item.itemStatus === "processing" &&
+                                      "Processing"}
+                                    {item.itemStatus === "shipped" && "Shipped"}
+                                    {item.itemStatus === "delivered" &&
+                                      "Delivered"}
+                                  </span>
+
+                                  {/* Status selector - only if status is not "delivered" */}
+                                  {item.itemStatus !== "delivered" && (
+                                    <div className="mt-2 w-full md:w-40">
+                                      <select
+                                        value={item.itemStatus}
+                                        onChange={(e) =>
+                                          handleStatusChange(
+                                            order._id,
+                                            item._id,
+                                            e.target.value
+                                          )
+                                        }
+                                        className="block w-full rounded-md border border-gray-300 py-1.5 px-2 text-sm shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                                      >
+                                        {statusOptions
+                                          .filter((option) => {
+                                            // Prevent going back in status flow
+                                            const currentStatusIndex =
+                                              statusOptions.findIndex(
+                                                (o) =>
+                                                  o.value === item.itemStatus
+                                              );
+                                            const optionIndex =
+                                              statusOptions.findIndex(
+                                                (o) => o.value === option.value
+                                              );
+                                            return (
+                                              optionIndex >= currentStatusIndex
+                                            );
+                                          })
+                                          .map((option) => (
+                                            <option
+                                              key={option.value}
+                                              value={option.value}
+                                            >
+                                              {option.label}
+                                            </option>
+                                          ))}
+                                      </select>
+                                    </div>
+                                  )}
+                                </div>
+                              </div>
+                            </motion.div>
+                          ))}
+                        </div>
                       </div>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
-          ))}
+
+                      {/* Shipping address */}
+                      {order.shippingAddress && (
+                        <div className="p-4 bg-gray-50 border-t">
+                          <h4 className="font-medium text-gray-700 mb-2">
+                            Shipping Address:
+                          </h4>
+                          <p className="text-sm text-gray-800">
+                            {order.shippingAddress.name}
+                          </p>
+                          <p className="text-sm text-gray-800">
+                            {order.shippingAddress.street}
+                          </p>
+                          <p className="text-sm text-gray-800">
+                            {order.shippingAddress.postalCode}{" "}
+                            {order.shippingAddress.city}
+                          </p>
+                          <p className="text-sm text-gray-800">
+                            {order.shippingAddress.phoneNumber}
+                          </p>
+                          <p className="text-sm text-gray-800">
+                            {order.shippingAddress.email}
+                          </p>
+                        </div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+            );
+          })}
         </div>
       )}
     </div>

@@ -38,7 +38,7 @@ const ProductInfo = ({
           <span className="text-red-500 ml-1">*</span>
         </label>
         <textarea
-          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500  transition-all duration-200 "
+          className="w-full px-4 py-2 border-2 border-gray-300 rounded-lg focus:outline-none focus:border-indigo-200 focus:ring-1 focus:ring-indigo-500 transition-all duration-200"
           rows={5}
           onChange={(e) => setProductDescription(e.target.value)}
           value={productDescription}

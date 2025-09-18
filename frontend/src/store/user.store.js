@@ -94,12 +94,10 @@ export const useUserStore = create(
             `${API_URL}/didCommented/${sellerId}`
           );
 
-          if (!response.data.error) {
-            set({
-              commentId: response.data.commentId,
-              isLoading: false,
-            });
-          }
+          set({
+            commentId: response.data.commentId,
+            isLoading: false,
+          });
         } catch (error) {
           let errorMessage = "An error occurred while getting comment ID";
 
@@ -107,7 +105,6 @@ export const useUserStore = create(
             errorMessage = error.response?.data?.error || error.message;
           }
 
-          console.log("error : ", error);
           set({ error: errorMessage, isLoading: false });
           throw Error(errorMessage);
         }
@@ -133,7 +130,6 @@ export const useUserStore = create(
             errorMessage = error.response?.data?.error || error.message;
           }
 
-          console.log("error : ", error);
           set({ error: errorMessage, isLoading: false });
           throw Error(errorMessage);
         }
@@ -146,12 +142,10 @@ export const useUserStore = create(
             `${API_URL}/didCommentedProduct/${productId}`
           );
 
-          if (!response.data.error) {
-            set({
-              commentProductId: response.data.commentId,
-              isLoading: false,
-            });
-          }
+          set({
+            commentProductId: response.data.commentId,
+            isLoading: false,
+          });
         } catch (error) {
           let errorMessage = "An error occurred while getting comment ID";
 
@@ -159,7 +153,6 @@ export const useUserStore = create(
             errorMessage = error.response?.data?.error || error.message;
           }
 
-          console.log("error : ", error);
           set({ error: errorMessage, isLoading: false });
           throw Error(errorMessage);
         }

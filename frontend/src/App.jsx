@@ -48,6 +48,7 @@ import AdminProductDetailsPage from "./pages/adminSupPages/AdminProductDetailsPa
 import SpecificProducts from "./pages/clientPages/SpecificProducts";
 import ViewProductPage from "./pages/adminPages/ViewProductPage";
 import ReturnsPage from "./pages/adminPages/ReturnsPage";
+import DesactivatedPage from "./pages/adminPages/DesactivatedPage";
 
 // protect routes that require authentication
 const ProtectedRoute = ({ children, allowedRoles }) => {
@@ -136,6 +137,7 @@ const VendorRoutes = () => (
         <Route path="orders" element={<OrdersPage />} />
         <Route path="returns" element={<ReturnsPage />} />
         <Route path="profile" element={<ProfilePage />} />
+
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </VendorLayout>
@@ -206,6 +208,12 @@ const BuyerRoutes = () => {
           path="category/:gender/:category"
           element={<SpecificProductsWithTransition />}
         />
+        <Route
+          path="complete-payment"
+          element={<SuccessPageWithTransition />}
+        />
+        <Route path="cancel-payment" element={<CancelPageWithTransition />} />
+        <Route path="desactivated" element={<DesactivatedPage />} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </AnimatePresence>
@@ -223,11 +231,7 @@ const BuyerProtectedRoutes = () => {
           <Route path="wishlist" element={<LikePageWithTransition />} />
           <Route path="orders" element={<OrdersWithTransition />} />
           <Route path="profile" element={<ProfileWithTransition />} />
-          <Route
-            path="complete-payment"
-            element={<SuccessPageWithTransition />}
-          />
-          <Route path="cancel-payment" element={<CancelPageWithTransition />} />
+
           <Route path="*" element={<NotFoundWithTransition />} />
         </Routes>
       </BuyerProtectedRoute>

@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+// eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
 import { useParams } from "react-router-dom";
 
@@ -117,15 +118,18 @@ const SellerInfoPage = () => {
                   sellerReviews={sellerReviews}
                   renderStars={renderStars}
                   commentId={commentId}
+                  sellerId={sellerId}
                 />
 
                 {/* Add Review Section */}
-                <AddReview
-                  setNewReview={setNewReview}
-                  newReview={newReview}
-                  setRefresh={setRefresh}
-                  sellerId={sellerId}
-                />
+                {!commentId && (
+                  <AddReview
+                    setNewReview={setNewReview}
+                    newReview={newReview}
+                    setRefresh={setRefresh}
+                    sellerId={sellerId}
+                  />
+                )}
               </div>
 
               {/* Seller Stats */}

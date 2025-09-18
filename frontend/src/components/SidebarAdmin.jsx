@@ -10,12 +10,14 @@ import React from "react";
 import { useEffect } from "react";
 import { useLocation, useNavigate, Link } from "react-router-dom";
 import { useProductStore } from "../store/product.store";
+import { useReturnStore } from "../store/return.store";
 
 const SidebarAdmin = () => {
   const location = useLocation(); // Pour détecter la page active
   const navigate = useNavigate();
 
   const { getPendingProducts, pendingProducts } = useProductStore();
+  const { getReturnProduct, ordersRequested } = useReturnStore();
 
   // Fonction pour vérifier si un lien est actif
   const isActive = (path) => location.pathname === path;
@@ -39,6 +41,7 @@ const SidebarAdmin = () => {
       gender: "all",
       search: "",
     });
+    getReturnProduct();
   }, []);
 
   return (
@@ -75,6 +78,7 @@ const SidebarAdmin = () => {
               icon={<Repeat2 size={20} />}
               text="Returns"
               active={isActive("/admin/returns-requests")}
+              alert={ordersRequested.length !== 0 ? true : false}
               link="/admin/returns-requests"
             />
             <SidebarItem

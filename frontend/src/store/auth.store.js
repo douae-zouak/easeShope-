@@ -100,6 +100,11 @@ export const useAuthStore = create(
             password,
           });
 
+          if (response.data.error) {
+            set({ error: response.data.error, isLoading: false });
+            return { error: response.data.error };
+          }
+
           set({
             user: response.data.user,
             isAuthenticated: true,

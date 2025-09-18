@@ -33,6 +33,7 @@ import { useFavoriteStore } from "../store/favorite.store";
 import { useCartStore } from "../store/cart.store";
 import { useCommentStore } from "../store/comment.store";
 import { useAuthStore } from "../store/auth.store";
+import LoginFirst from "../pages/clientPages/LoginFirst";
 
 const ProductDetails = ({
   product,
@@ -48,6 +49,7 @@ const ProductDetails = ({
   const [quantity, setQuantity] = useState(1);
   const isLiked = favorites.some((fav) => fav.productId._id === id);
   const [liked, setLiked] = useState(isLiked);
+  const [shouldLogin, setShouldLogin] = useState(false);
 
   const discountedPrice =
     product.discount > 0
@@ -65,7 +67,7 @@ const ProductDetails = ({
         toast.success(`${product.name} added to your cart successfully`);
       } catch (error) {
         if (error.message?.includes("401")) {
-          toast.error("Please login to add products to cart");
+          setShouldLogin(true);
         } else {
           toast.error(
             `Error adding product to cart: ${error.message || error}`
@@ -73,7 +75,7 @@ const ProductDetails = ({
         }
       }
     } else {
-      toast.error("Please login to add products to cart");
+      setShouldLogin(true);
     }
   };
 
@@ -99,7 +101,7 @@ const ProductDetails = ({
         setLiked(!liked);
       } catch (error) {
         if (error.message?.includes("No")) {
-          toast.error("Please login to add products to wishlist");
+          setShouldLogin(true);
         } else {
           toast.error(
             `Error adding product to wishlist: ${error.message || error}`
@@ -107,7 +109,7 @@ const ProductDetails = ({
         }
       }
     } else {
-      toast.error("Please login to add products to wishlist");
+      setShouldLogin(true);
     }
   };
 
@@ -153,6 +155,10 @@ const ProductDetails = ({
   const Icon = categoryData.icon;
   const label = categoryData.label;
 
+  const onClose = () => {
+    setShouldLogin(false);
+  };
+
   const renderStars = (rating) => {
     return Array.from({ length: 5 }).map((_, index) => (
       <svg
@@ -170,6 +176,7 @@ const ProductDetails = ({
 
   return (
     <div className="bg-white rounded-xl shadow-lg p-6">
+      <LoginFirst isOpen={shouldLogin} onClose={onClose} />
       <div className="flex justify-between items-start">
         <div>
           <span

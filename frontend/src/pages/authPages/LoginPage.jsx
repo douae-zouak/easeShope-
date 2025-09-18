@@ -19,6 +19,16 @@ const LoginPage = () => {
     e.preventDefault();
     try {
       const loggedInUser = await login(email, password);
+
+      if (loggedInUser.error) {
+        toast.error(loggedInUser.error);
+      }
+
+      if (loggedInUser?.error?.includes("Your account is desactivated")) {
+        console.log("ehre");
+        navigate("/desactivated");
+      }
+
       if (loggedInUser?.role === "vendor") {
         navigate("/vendor/dashboard");
       }
@@ -29,8 +39,13 @@ const LoginPage = () => {
         navigate("/admin/dashboard");
       }
     } catch (error) {
+      if (error.response?.data?.error?.includes("desactivated")) {
+        // navigate("/vendor/desactivated");
+        toast.error("here");
+      }
       const errorMessage =
         error.response?.data?.error || "Invalid credentials. Please try again.";
+      console.log("err ; ", error);
       toast.error(errorMessage);
     }
   };
