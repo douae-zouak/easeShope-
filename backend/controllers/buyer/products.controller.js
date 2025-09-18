@@ -8,10 +8,18 @@ const Order = require("../../models/Order.model");
 
 exports.getProducts = async (req, res, next) => {
   try {
-    const products = await Product.find();
+    const products = await Product.find().populate({
+      path: "seller",
+      select: "fullName email isActive",
+    });
+
+    // Filtrer les produits où le vendeur existe ET est actif
+    const activeProducts = products.filter(
+      (product) => product.seller && product.seller.isActive === true
+    );
 
     res.status(200).json({
-      products,
+      products: activeProducts,
     });
   } catch (error) {
     next(error);
@@ -137,7 +145,7 @@ exports.commented = async (req, res, next) => {
 
     if (!comment) {
       return res.json({
-        error: "This user had never commented for this seller",
+        commentId: null,
       });
     }
 
@@ -161,7 +169,7 @@ exports.commentedProduct = async (req, res, next) => {
 
     if (!comment) {
       return res.json({
-        error: "This user had never commented for this seller",
+        commentProductId: null,
       });
     }
 

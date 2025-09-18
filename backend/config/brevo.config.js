@@ -158,7 +158,6 @@ exports.ProductRejected = async (
 exports.VendorDesactivated = async (
   recipient,
   sellerName,
-  productName,
   reason,
   deactivationDate
 ) => {
@@ -176,6 +175,75 @@ exports.VendorDesactivated = async (
         /{policyLink}/g,
         "https://yourmarketplace.com/vendor-guidelines"
       ),
+  };
+
+  try {
+    await transporter.sendMail(msg);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error(`Error sending product rejection order : ${error.message}`);
+  }
+};
+
+exports.ReturnRequestRejected = async (
+  recipient,
+  clientName,
+  orderNumber,
+  reuqestDate,
+  product,
+  productName,
+  reason,
+  rejectionReason
+) => {
+  const msg = {
+    to: recipient,
+    from: process.env.EMAIL_USER,
+    subject: "Return request rejected! ",
+    html: emailTemplate.RETURN_REQUEST_REJECTED.replace(
+      /{clientName}/g,
+      clientName
+    )
+      .replace(/{orderNumber}/g, orderNumber)
+      .replace(/{reuqestDate}/g, reuqestDate)
+      .replace(/{productName}/g, productName)
+      .replace(/{productColor}/g, product.colorTitle)
+      .replace(/{productSize}/g, product.size)
+      .replace(/{returnReason}/g, reason)
+      .replace(/{rejectionReason}/g, rejectionReason),
+  };
+
+  try {
+    await transporter.sendMail(msg);
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw new Error(`Error sending product rejection order : ${error.message}`);
+  }
+};
+
+exports.ReturnRequestApproved = async (
+  recipient,
+  clientName,
+  orderNumber,
+  reuqestDate,
+  product,
+  productName,
+  reason
+) => {
+  const msg = {
+    to: recipient,
+    from: process.env.EMAIL_USER,
+    subject: "Return request approved ",
+    html: emailTemplate.RETURN_REQUEST_APPROVED.replace(
+      /{clientName}/g,
+      clientName
+    )
+      .replace(/{orderNumber}/g, orderNumber)
+      .replace(/{reuqestDate}/g, reuqestDate)
+      .replace(/{productName}/g, productName)
+      .replace(/{productColor}/g, product.colorTitle)
+      .replace(/{productSize}/g, product.size)
+      .replace(/{returnReason}/g, reason)
+      .replace(/{productPrice}/g, product.priceAtPurchase.toFixed(2)),
   };
 
   try {

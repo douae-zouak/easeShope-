@@ -10,12 +10,6 @@ exports.requestReturn = async (req, res, next) => {
     const orderId = req.body.orderId;
     const userId = req.user._id;
 
-    console.log("body :", req.body);
-    console.log("order :", orderId);
-    console.log(productId);
-    console.log("user : ", userId);
-    console.log(reason);
-
     if (!orderId || !mongoose.Types.ObjectId.isValid(orderId)) {
       return res.status(400).json({ error: "Invalid order ID format" });
     }
@@ -45,6 +39,14 @@ exports.requestReturn = async (req, res, next) => {
         }
       }
       return res.status(404).json({ error: "No order found!" });
+    }
+
+    const deliverationDate = new Date(order.deliveredAt); // convertir en Date
+    const now = Date.now(); // timestamp actuel en ms
+    const tenDays = 10 * 24 * 60 * 60 * 1000; // 10 jours en ms
+
+    if (now - deliverationDate.getTime() > tenDays) {
+      return res.json({ error: "Return period exceeded (10 days)" });
     }
 
     const item = order.items.find(

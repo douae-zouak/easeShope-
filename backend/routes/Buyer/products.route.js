@@ -1,6 +1,5 @@
 const express = require("express");
 const productsController = require("../../controllers/buyer/products.controller");
-const authMiddleware = require("../../middlewares/auth.middleware");
 
 const router = express.Router();
 
@@ -20,23 +19,14 @@ router.get(
   productsController.getSellerExperience
 );
 
-router.get(
-  "/didCommented/:sellerId",
-  authMiddleware.ckeckTokens,
-  productsController.commented
-);
+router.get("/didCommented/:sellerId", productsController.commented);
 
 router.get(
   "/didCommentedProduct/:productId",
-  authMiddleware.ckeckTokens,
   productsController.commentedProduct
 );
 
-router.get(
-  "/didOrderedProduct/:productId",
-  authMiddleware.ckeckTokens,
-  productsController.orderedProduct
-);
+router.get("/didOrderedProduct/:productId", productsController.orderedProduct);
 
 router.get("/getLike/:id", productsController.getLike);
 

@@ -71,9 +71,10 @@ const orderItemsSchema = new mongoose.Schema({
   returnDate: { type: Date },
   returnStatus: {
     type: String,
-    enum: ["requested", "approved", "rejected", "completed", "not requested"],
+    enum: ["requested", "approved", "rejected", "not requested"],
     default: "not requested",
   },
+  rejectionReason: { type: String },
   images: [
     {
       url: { type: String, required: true },
@@ -125,7 +126,7 @@ const OrderSchema = new mongoose.Schema(
 
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: "user",
       required: true,
     },
 

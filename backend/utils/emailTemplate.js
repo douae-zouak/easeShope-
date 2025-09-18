@@ -436,16 +436,13 @@ exports.DESACTIVATED_EMAIL_TEMPLATE = `<!DOCTYPE html>
           <li>Submit an appeal through our vendor support portal</li>
         </ol>
         
-        <center>
-          <a href="{appealLink}" class="button">Submit Appeal</a>
-        </center>
       </div>
       
       <div class="contact-info">
         <h3>Need Help?</h3>
         <p>Our support team is here to assist you with any questions:</p>
         <p>Email: <a href="mailto:support@marketplace.com">support@marketplace.com</a></p>
-        <p>Phone: +1 (800) 123-4567</p>
+        <p>Phone: +212 7 63 81 88 93</p>
         <p>Hours: Monday-Friday, 9AM-5PM EST</p>
       </div>
       
@@ -458,8 +455,306 @@ exports.DESACTIVATED_EMAIL_TEMPLATE = `<!DOCTYPE html>
     <div class="footer">
       <p>This is an automated message. Please do not reply to this email.</p>
       <p>© 2023 Marketplace Name. All rights reserved.</p>
-      <p><a href="{unsubscribeLink}">Unsubscribe</a> from these notifications</p>
     </div>
   </div>
+</body>
+</html>`;
+
+exports.RETURN_REQUEST_REJECTED = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Request Update</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .email-header {
+            background-color: #2d5b87;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-body {
+            padding: 30px;
+        }
+        .email-footer {
+            background-color: #f8f8f8;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+        }
+        .logo {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        h1 {
+            color: #2d5b87;
+            margin-top: 0;
+        }
+        .order-details {
+            background-color: #f8f8f8;
+            border-left: 4px solid #2d5b87;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 1px solid #eeeeee;
+        }
+        .reason-box {
+            background-color: #fff4f4;
+            border: 1px solid #ffcccc;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2d5b87;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+        }
+        @media screen and (max-width: 600px) {
+            .email-body {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="email-header">
+            <a href="#" class="logo">MARKETPLACE</a>
+        </div>
+        
+        <!-- Body -->
+        <div class="email-body">
+            <h1>Return Request Update</h1>
+            
+            <p>Dear {clientName},</p>
+            
+            <p>Thank you for submitting a return request for your recent order. After careful review, we regret to inform you that your return request has been <strong>rejected</strong>.</p>
+            
+            <div class="order-details">
+                <p><strong>Order Number:</strong> #{orderNumber}</p>
+                <p><strong>Date of Request:</strong> {reuqestDate}</p>
+                <p><strong>Product:</strong> {productName} - {productColor} (Size {productSize})</p>
+                <p><strong>Reason for Return:</strong> {returnReason}</p>
+            </div>
+            
+            <div class="reason-box">
+                <h3 style="margin-top: 0; color: #cc0000;">Reason for Rejection</h3>
+                <p>{rejectionReason}.</p>
+            </div>
+            
+            <p>We understand this might be disappointing. If you would like to discuss this decision further or have additional questions, please don't hesitate to contact our customer service team.</p>
+            
+            
+            <div class="contact-info">
+                <p><strong>Customer Service Hours:</strong><br>
+                Monday-Friday: 8:00 AM - 8:00 PM EST<br>
+                Saturday: 9:00 AM - 6:00 PM EST<br>
+                Sunday: Closed</p>
+                
+                <p><strong>Email:</strong> support@marketplace.com<br>
+                <strong>Phone:</strong> +212 7 63 81  88 93</p>
+            </div>
+            
+            <p>Thank you for your understanding.</p>
+            
+            <p>Sincerely,<br>
+            The Marketplace Team</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="email-footer">
+            <p>© 2023 Marketplace. All rights reserved.</p>
+            <p>123 Commerce Street, Morocco</p>
+        </div>
+    </div>
+</body>
+</html>`;
+
+exports.RETURN_REQUEST_APPROVED = `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Return Request Approved</title>
+    <style>
+        body {
+            font-family:  sans-serif;
+            line-height: 1.6;
+            color: #333333;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+        }
+        .email-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+        }
+        .email-header {
+            background-color: #2d5b87;
+            padding: 20px;
+            text-align: center;
+        }
+        .email-body {
+            padding: 30px;
+        }
+        .email-footer {
+            background-color: #f8f8f8;
+            padding: 20px;
+            text-align: center;
+            font-size: 12px;
+            color: #666666;
+        }
+        .logo {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        h1 {
+            color: #2d5b87;
+            margin-top: 0;
+        }
+        .order-details {
+            background-color: #f8f8f8;
+            border-left: 4px solid #2d5b87;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .product-image {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border: 1px solid #eeeeee;
+        }
+        .approval-box {
+            background-color: #f4f9ff;
+            border: 1px solid #cce5ff;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .next-steps {
+            background-color: #f0f9f0;
+            border: 1px solid #c3e6c3;
+            border-radius: 4px;
+            padding: 15px;
+            margin: 20px 0;
+        }
+        .button {
+            display: inline-block;
+            padding: 12px 24px;
+            background-color: #2d5b87;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+        .contact-info {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #eeeeee;
+        }
+    </style>
+</head>
+<body>
+    <div class="email-container">
+        <!-- Header -->
+        <div class="email-header">
+            <a href="#" class="logo">MARKETPLACE</a>
+        </div>
+        
+        <!-- Body -->
+        <div class="email-body">
+            <h1>Return Request Approved</h1>
+            
+            <p>Dear {clientName},</p>
+            
+            <p>We're pleased to inform you that your return request has been <strong>approved</strong>. We've initiated the return process for your item.</p>
+            
+            <div class="order-details">
+                <p><strong>Order Number:</strong> #{orderNumber}</p>
+                <p><strong>Date of Request:</strong>{reuqestDate}</p>
+                <p><strong>Product:</strong> {productName} - {productColor} (Size {productSize})</p>
+                <p><strong>Reason for Return:</strong>{returnReason}</p>
+            </div>
+            
+            <div class="approval-box">
+                <h3 style="margin-top: 0; color: #2d5b87;">Approval Details</h3>
+                <p>Your return has been approved for a <strong>full refund of {productPrice} DH</strong>. The refund will be processed to your original payment method within 5-7 business days after we receive the item.</p>
+            </div>
+            
+            <h3>Next Steps</h3>
+            
+            <div class="next-steps">
+                <ol>
+                    <li><strong>Prepare your item:</strong> Please ensure the item is in its original condition with all tags attached</li>
+                    <li><strong>Packaging:</strong> Use the original packaging if possible</li>
+                    <li><strong>Return label:</strong> A prepaid return shipping label is attached to this email</li>
+                    <li><strong>Ship your return:</strong> Drop off the package at any designated shipping location</li>
+                </ol>
+            </div>
+            
+           
+            
+            <p>Please note that the return must be postmarked within 14 days of today's date. After we receive and inspect your returned item, we will process your refund.</p>
+            
+            <a href="#" class="button">Print Return Label</a>
+            
+            
+            <div class="contact-info">
+                <p><strong>Need assistance?</strong> Our customer service team is here to help.</p>
+                
+                <p><strong>Customer Service Hours:</strong><br>
+                Monday-Friday: 8:00 AM - 8:00 PM EST<br>
+                Saturday: 9:00 AM - 6:00 PM EST<br>
+                Sunday: Closed</p>
+                
+                <p><strong>Email:</strong> returns@marketplace.com<br>
+                <strong>Phone:</strong> +1 (800) 123-RETURN</p>
+            </div>
+            
+            <p>Thank you for shopping with us.</p>
+            
+            <p>Sincerely,<br>
+            The Marketplace Team</p>
+        </div>
+        
+        <!-- Footer -->
+        <div class="email-footer">
+            <p>© 2023 Marketplace. All rights reserved.</p>
+            <p>123 Commerce Street, Morocco, NY 10001</p>
+        </div>
+    </div>
 </body>
 </html>`;

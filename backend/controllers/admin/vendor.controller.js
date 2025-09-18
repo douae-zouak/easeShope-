@@ -97,13 +97,13 @@ exports.getVendorDetails = async (req, res, next) => {
   }
 };
 
-exports.deactivateVendor = async (req, res, next) => {
+exports.desactivateVendor = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { reason } = req.body;
 
     if (!reason) {
-      return res.status(400).json({
+      return res.json({
         success: false,
         error: "Deactivation reason is required",
       });
@@ -121,11 +121,18 @@ exports.deactivateVendor = async (req, res, next) => {
     ).select("-password");
 
     if (!vendor) {
-      return res.status(404).json({
+      return res.json({
         success: false,
         error: "Vendor not found",
       });
     }
+
+    await brevoConfig.VendorDesactivated(
+      vendor.email,
+      vendor.fullName,
+      reason,
+      new Date()
+    );
 
     res.status(200).json({
       success: true,

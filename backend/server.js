@@ -1,4 +1,6 @@
 const express = require("express");
+const http = require("http");
+const { Server } = require("socket.io");
 const dotenv = require("dotenv");
 const cookieParser = require("cookie-parser");
 //const mongoSanitize = require("express-mongo-sanitize");
@@ -15,6 +17,8 @@ const authRoutes = require("./routes/auth.route");
 const productRoutes = require("./routes/vendor/product.route");
 const profileRoutes = require("./routes/vendor/profile.route");
 const ordersRoutes = require("./routes/vendor/order.route");
+const vendorReturnRoutes = require("./routes/vendor/return.route");
+const vendorStatsRoutes = require("./routes/vendor/stat.route");
 
 const errorMiddleware = require("./middlewares/error.middleware");
 const authMiddleware = require("./middlewares/auth.middleware");
@@ -29,6 +33,8 @@ const favoriteRoutes = require("./routes/Buyer/favorite.route");
 
 const adminProductRoutes = require("./routes/admin/product.route");
 const adminVendorRoutes = require("./routes/admin/vendor.route");
+const adminReturnRoutes = require("./routes/admin/return.route");
+const adminStatsRoutes = require("./routes/admin/stats.route");
 
 dotenv.config();
 
@@ -87,8 +93,13 @@ app.use("/sellerReview", authMiddleware.ckeckTokens, sellerReviewRoutes);
 app.use("/productReview", authMiddleware.ckeckTokens, productReviewRoutes);
 app.use("/returns", authMiddleware.ckeckTokens, returnsRoutes);
 
-app.use("/admin", adminProductRoutes);
-app.use("/admin", adminVendorRoutes);
+app.use("/admin/product", authMiddleware.ckeckTokens, adminProductRoutes);
+app.use("/admin/vendor", authMiddleware.ckeckTokens, adminVendorRoutes);
+app.use("/admin/return", authMiddleware.ckeckTokens, adminReturnRoutes);
+app.use("/admin/stats", authMiddleware.ckeckTokens, adminStatsRoutes);
+
+app.use("/vendor/return", authMiddleware.ckeckTokens, vendorReturnRoutes);
+app.use("/vendor/stats", authMiddleware.ckeckTokens, vendorStatsRoutes);
 
 // Error handling
 app.use(errorMiddleware.notFoundHandler);
@@ -96,6 +107,7 @@ app.use(errorMiddleware.errorHandler);
 
 // Server
 const port = process.env.PORT || 3000;
+
 app.listen(port, () => {
   console.log("server running on port 3000");
 });

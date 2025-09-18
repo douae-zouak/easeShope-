@@ -139,14 +139,14 @@ exports.postLogin = async (req, res, next) => {
     //tu forces Mongoose à inclure ces champs cachés dans le résultat par select: false
 
     if (!user) {
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.json({ error: "Invalid credentials" });
     }
 
     if (user.accountLockedUntil && user.accountLockedUntil > Date.now()) {
       const remainingTime = Math.ceil(
         (user.accountLockedUntil - Date.now()) / (60 * 1000)
       );
-      return res.status(400).json({
+      return res.json({
         error: `Account locked. Try again in ${remainingTime} minutes`,
       });
     }
@@ -162,12 +162,12 @@ exports.postLogin = async (req, res, next) => {
       if (user.loginAttempts >= 5) {
         user.accountLockedUntil = Date.now() + 1000 * 60 * 30;
         await user.save();
-        return res.status(400).json({
+        return res.json({
           error: "Too many failed attempts. Account locked for 30 minutes",
         });
       }
 
-      return res.status(400).json({ error: "Invalid credentials" });
+      return res.json({ error: "Invalid credentials" });
     }
 
     user.loginAttempts = 0;
@@ -179,7 +179,7 @@ exports.postLogin = async (req, res, next) => {
       res.json({ error: "Please verify your email first" });
     }
 
-    if (!user.isActive && user.whoDesactivated === "admin") {
+    if (!user.isActive || user.whoDesactivated === "admin") {
       res.json({ error: "Your account is desactivated" });
     }
 

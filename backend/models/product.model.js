@@ -158,6 +158,11 @@ const productSchema = new mongoose.Schema(
         "La raison de rejet ne peut pas dépasser 500 caractères",
       ],
     },
+    salesCount: {
+      type: Number,
+      default: 0,
+      min: 0,
+    },
   },
   {
     timestamps: true,

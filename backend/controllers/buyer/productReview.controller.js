@@ -107,7 +107,8 @@ exports.addReview = async (req, res, next) => {
       });
     }
 
-    const productReviews = await ProductReview.create({
+    // Créer la review
+    const productReview = await ProductReview.create({
       userId,
       productId,
       orderId: order[0]._id,
@@ -116,9 +117,19 @@ exports.addReview = async (req, res, next) => {
       images: uploadedImages,
     });
 
+    // Populate pour obtenir les informations de l'utilisateur
+    const populatedReview = await ProductReview.findById(
+      productReview._id
+    ).populate({
+      path: "userId",
+      select: "fullName profilePhoto email",
+      model: mongoose.model("user"),
+    });
+
+
     res.status(201).json({
       message: "Review added with success",
-      productReviews: productReviews,
+      productReviews: populatedReview, // Retourner la review avec les infos utilisateur
     });
   } catch (error) {
     // En cas d'erreur, supprimer les images déjà uploadées
@@ -232,5 +243,3 @@ exports.deleteComment = async (req, res, next) => {
     next(error);
   }
 };
-
-
